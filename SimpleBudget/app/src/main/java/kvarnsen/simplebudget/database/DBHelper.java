@@ -19,8 +19,9 @@ import kvarnsen.simplebudget.containers.LineItem;
 /*
     Handles SQLite Database creation, updating and deletion.
  */
-
 public class DBHelper extends SQLiteOpenHelper {
+
+    private static DBHelper instance;
 
     public static final String DATABASE_NAME = "SimpleBudget.db";
     public static final String BUDGET_TABLE_NAME = "budget";
@@ -32,7 +33,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     Context myContext = null;
 
-    public DBHelper(Context context) {
+    public static DBHelper getInstance(Context context) {
+
+        if(instance == null) {
+            instance = new DBHelper(context.getApplicationContext());
+        }
+
+        return instance;
+
+    }
+
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME , null, 1);
         myContext = context;
     }

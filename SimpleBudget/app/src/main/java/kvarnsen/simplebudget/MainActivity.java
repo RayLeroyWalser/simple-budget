@@ -1,6 +1,7 @@
 package kvarnsen.simplebudget;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,12 +21,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 import kvarnsen.simplebudget.ui.BudgetDialogFragment;
+import kvarnsen.simplebudget.ui.MainAdapter;
 
 
 public class MainActivity extends ActionBarActivity implements BudgetDialogFragment.BudgetDialogListener{
@@ -35,14 +39,20 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     DBHelper db;
     DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle mDrawerToggle;
+    CardView budgetCard;
 
     private int curBudget = 0;
     private int totalSpent = 0;
+
+    private ArrayList myLineItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        budgetCard = (CardView) findViewById(R.id.budget_card);
+        budgetCard.setVisibility(View.GONE);
 
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         curBudget = preferences.getInt("curBudget", 0);
@@ -63,17 +73,13 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        db = new DBHelper(this);
+        db = DBHelper.getInstance(this);
 
         if(curBudget == 0) {
             DialogFragment fragment = new BudgetDialogFragment();
             fragment.show(getSupportFragmentManager(), "budget");
         } else {
-            // create a card containing budget details and display
-            Log.w("SB", "Budget is: " + Integer.toString(curBudget));
-
-            // if db entries for line items exist, intialise adapter and start recycler view
-            // else prompt user to add items
+            initCards();
         }
 
     }
@@ -92,33 +98,78 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         editor.commit();
 
+        initCards();
+
     }
 
-    public void onItemViewClick(View v) {
+    @Override
+    public void onResume() {
+        super.onResume();
 
-        ArrayList myLineItems = db.getAllLineItems();
-        String result = "";
-        LineItem curItem;
+        Log.w("SB", "Resume called");
 
-        for(int i=0; i < myLineItems.size(); i++) {
+        if(db.getNoRows() != 0) {
 
-            curItem = (LineItem) myLineItems.get(i);
+            myLineItems = db.getAllLineItems();
+            CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
+            placeholder.setVisibility(View.GONE);
 
-            result = result + curItem.id + "\n" + curItem.name + "\n" + curItem.budgeted + "\n" + curItem.spent + "\n" + curItem.remaining + "\n\n";
+            mAdapter = new MainAdapter(myLineItems);
+            mRecyclerView.setAdapter(mAdapter);
 
         }
+    }
 
-        Log.w("Current Items", result);
+    public void initCards() {
+
+        TextView budgetContent = (TextView) budgetCard.findViewById(R.id.budget_content);
+
+        budgetContent.setText(
+                "Budgeted: $" + Integer.toString(curBudget) + ".00\nSpent: $" + Integer.toString(totalSpent) + ".00\n"
+                + "Remaining: $" + Integer.toString(curBudget - totalSpent) + ".00\n"
+        );
+
+        budgetCard.setVisibility(View.VISIBLE);
+
+        if(db.getNoRows() != 0) {
+
+            myLineItems = db.getAllLineItems();
+            CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
+            placeholder.setVisibility(View.GONE);
+
+            mAdapter = new MainAdapter(myLineItems);
+            mRecyclerView.setAdapter(mAdapter);
+
+        } else {
+            Log.w("SB", "Database empty");
+        }
+    }
+
+    public void addLineItem(View v) {
+
+        Intent intent = new Intent(this, ItemActivity.class);
+        startActivity(intent);
+
     }
 
     public void deleteDatabase(View v) {
 
         boolean result = db.deleteDatabase();
 
-        if(result)
-            Log.w("Deletion", "Success");
-        else
-            Log.w("Deletion", "Failed");
+        if(result) {
+            Context context = getApplicationContext();
+            CharSequence text = "Database cleared";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast.makeText(context, text, duration).show();
+        }
+        else {
+            Context context = getApplicationContext();
+            CharSequence text = "Database failed to clear";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast.makeText(context, text, duration).show();
+        }
 
     }
 
@@ -144,6 +195,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            onResume(); // buggy at the moment - noOfRows returning > 0
             return true;
         }
 
