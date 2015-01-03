@@ -11,5 +11,8 @@
     <string name="itemactivity_prompt">Click to enter ItemActivity</string>
     <string name="settings_alt">Settings Button</string>
     <string name="settings_text">Settings</string>
+    <string name="title_activity_budget_dialog">BudgetDialogActivity</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

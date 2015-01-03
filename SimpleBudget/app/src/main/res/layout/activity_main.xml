@@ -21,8 +21,6 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimaryDark"/>
 
-
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:scrollbars="vertical"

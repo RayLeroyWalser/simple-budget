@@ -24,6 +24,10 @@
             android:name="kvarnsen.simplebudget.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.ui.BudgetDialogActivity"
+            android:label="@string/title_activity_budget_dialog" >
+        </activity>
     </application>
 
 </manifest>
