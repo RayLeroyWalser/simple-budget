@@ -7,14 +7,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import kvarnsen.simplebudget.containers.LineItem;
+import kvarnsen.simplebudget.database.DBHelper;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    DBHelper db;
     DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle mDrawerToggle;
 
@@ -31,11 +44,43 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer, R.string.main);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        db = new DBHelper(this);
+
     }
 
-    public void onTVClick(View v) {
-        Intent intent = new Intent(this, ItemActivity.class);
-        startActivity(intent);
+    public void onItemViewClick(View v) {
+
+        ArrayList myLineItems = db.getAllLineItems();
+        String result = "";
+        LineItem curItem;
+
+        for(int i=0; i < myLineItems.size(); i++) {
+
+            curItem = (LineItem) myLineItems.get(i);
+
+            result = result + curItem.id + "\n" + curItem.name + "\n" + curItem.budgeted + "\n" + curItem.spent + "\n" + curItem.remaining + "\n\n";
+
+        }
+
+        Log.w("Current Items", result);
+    }
+
+    public void deleteDatabase(View v) {
+
+        boolean result = db.deleteDatabase();
+
+        if(result)
+            Log.w("Deletion", "Success");
+        else
+            Log.w("Deletion", "Failed");
+
     }
 
     public void onSettingsClick(View v) {
