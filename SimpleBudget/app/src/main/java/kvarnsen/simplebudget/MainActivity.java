@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import kvarnsen.simplebudget.database.DBHelper;
 import kvarnsen.simplebudget.ui.BudgetDialogFragment;
+import kvarnsen.simplebudget.ui.ItemHistoryActivity;
 import kvarnsen.simplebudget.ui.MainAdapter;
 
 
@@ -170,6 +171,17 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
             Toast.makeText(context, text, duration).show();
         }
+
+    }
+
+    public void onItemClick(View v) {
+
+        CardView callHolder = (CardView) v;
+        String itemName = ((TextView) callHolder.findViewById(R.id.title)).getText().toString();
+
+        Intent intent = new Intent(this, ItemHistoryActivity.class);
+        intent.putExtra("ITEM_NAME", itemName);
+        startActivity(intent);
 
     }
 

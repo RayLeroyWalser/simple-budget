@@ -48,6 +48,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         LineItem cur;
 
         CardView curCard = holder.mTextView;
+        curCard.setClickable(true);
 
         TextView curTitle = (TextView) curCard.findViewById(R.id.title);
         TextView curContent = (TextView) curCard.findViewById(R.id.content);

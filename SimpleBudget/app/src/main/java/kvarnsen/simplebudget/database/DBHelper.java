@@ -80,10 +80,31 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Cursor getData(int id) {
+    public LineItem getLineItem(String name) {
+
+        LineItem item = null;
+
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res =  myDb.rawQuery( "select * from budget where id="+id+"", null );
-        return res;
+        Cursor c = myDb.rawQuery("select * from budget where name='" + name + "'", null);
+
+        c.moveToFirst();
+
+        while(!c.isAfterLast()) {
+
+            item = new LineItem(
+                    c.getInt(c.getColumnIndex(BUDGET_ITEM_ID)),
+                    c.getString(c.getColumnIndex(BUDGET_ITEM_NAME)),
+                    c.getInt(c.getColumnIndex(BUDGET_ITEM_BUDGETED)),
+                    c.getInt(c.getColumnIndex(BUDGET_ITEM_SPENT)),
+                    c.getInt(c.getColumnIndex(BUDGET_ITEM_REMAINING))
+            );
+
+            c.moveToNext();
+
+        }
+
+        return item;
+
     }
 
     public int getTotalAllocated() {

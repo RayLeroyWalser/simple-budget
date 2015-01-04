@@ -3,7 +3,9 @@
     android:id="@+id/budget_card"
     android:layout_gravity="center_horizontal"
     android:layout_width="match_parent"
-    android:layout_height="150dp">
+    android:layout_height="150dp"
+    android:clickable="true"
+    android:onClick="onItemClick">
 
     <RelativeLayout
         android:layout_width="match_parent"

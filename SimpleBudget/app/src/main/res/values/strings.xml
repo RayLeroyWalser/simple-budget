@@ -14,5 +14,7 @@
     <string name="title_activity_budget_dialog">BudgetDialogActivity</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_item_history">ItemHistoryActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
