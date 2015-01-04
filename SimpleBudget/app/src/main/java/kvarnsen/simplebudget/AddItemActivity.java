@@ -1,6 +1,7 @@
 package kvarnsen.simplebudget;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,9 +15,12 @@ import android.widget.Toast;
 import kvarnsen.simplebudget.database.DBHelper;
 
 
-public class ItemActivity extends ActionBarActivity {
+public class AddItemActivity extends ActionBarActivity {
+
+    public final static String PREFS_NAME = "MyBudgetPrefs";
 
     private DBHelper myDb;
+    private int curBudget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +52,37 @@ public class ItemActivity extends ActionBarActivity {
         String name = nameView.getText().toString();
         String amountStr = amountView.getText().toString();
 
+        Context context = getApplicationContext();
+        CharSequence text;
+        int duration = Toast.LENGTH_SHORT;
+        int allocated = myDb.getTotalAllocated();
+
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+        curBudget = preferences.getInt("curBudget", 0);
+
+        Log.w("Cur Budget", Integer.toString(curBudget));
+        Log.w("Allocated", Integer.toString(allocated));
+        Log.w("Amount Str", amountStr);
+
         if(amountStr.equals("") || name.equals("")) {
 
-            Context context = getApplicationContext();
-            CharSequence text = "Invalid input, please try again!";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            text = "Invalid input, please try again!";
+            Toast.makeText(context, text, duration).show();
 
         } else {
 
-            myDb.insertLineItem(name, Integer.parseInt(amountStr), 0);
-            finish();
+            if(allocated == curBudget) {
+                text = "Current budget has already been completely allocated";
+                Toast.makeText(context, text, duration).show();
+                finish();
+            } else if((allocated + Integer.parseInt(amountStr)) > curBudget) {
+                text = "Amount exceeds remaining allocatable budget, please try again!";
+                Toast.makeText(context, text, duration).show();
+            } else {
+                myDb.insertLineItem(name, Integer.parseInt(amountStr), 0);
+                finish();
+            }
+
         }
 
 

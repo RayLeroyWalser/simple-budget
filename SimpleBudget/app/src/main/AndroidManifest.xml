@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="kvarnsen.simplebudget.ItemActivity"
+            android:name=".AddItemActivity"
             android:label="@string/title_activity_item" >
         </activity>
         <activity

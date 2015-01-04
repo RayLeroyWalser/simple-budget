@@ -15,23 +15,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 import kvarnsen.simplebudget.ui.BudgetDialogFragment;
 import kvarnsen.simplebudget.ui.MainAdapter;
 
 
 public class MainActivity extends ActionBarActivity implements BudgetDialogFragment.BudgetDialogListener{
+
+    public final static String PREFS_NAME = "MyBudgetPrefs";
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -41,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     ActionBarDrawerToggle mDrawerToggle;
     CardView budgetCard;
 
-    private int curBudget = 0;
+    private int curBudget = 0;  // how much of the budget has been spent
     private int totalSpent = 0;
 
     private ArrayList myLineItems;
@@ -54,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         budgetCard = (CardView) findViewById(R.id.budget_card);
         budgetCard.setVisibility(View.GONE);
 
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         curBudget = preferences.getInt("curBudget", 0);
         Log.w("SB", "curBudget: " + Integer.toString(curBudget));
 
@@ -89,14 +88,15 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         Log.w("SB", "Dialog Positive clicked!");
 
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = preferences.edit();
 
         BudgetDialogFragment mBudgetDialog = (BudgetDialogFragment) dialog;
 
         editor.putInt("curBudget", mBudgetDialog.getBudget());
-
         editor.commit();
+
+        curBudget = mBudgetDialog.getBudget();
 
         initCards();
 
@@ -147,7 +147,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     public void addLineItem(View v) {
 
-        Intent intent = new Intent(this, ItemActivity.class);
+        Intent intent = new Intent(this, AddItemActivity.class);
         startActivity(intent);
 
     }

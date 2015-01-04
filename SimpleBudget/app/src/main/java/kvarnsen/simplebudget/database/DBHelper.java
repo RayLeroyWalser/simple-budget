@@ -18,6 +18,8 @@ import kvarnsen.simplebudget.containers.LineItem;
 
 /*
     Handles SQLite Database creation, updating and deletion.
+
+    Code adapted with alterations from http://www.tutorialspoint.com/android/android_sqlite_database.htm
  */
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -82,6 +84,25 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase myDb = this.getWritableDatabase();
         Cursor res =  myDb.rawQuery( "select * from budget where id="+id+"", null );
         return res;
+    }
+
+    public int getTotalAllocated() {
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select budgeted from budget", null);
+
+        int totalAllocated = 0;
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            totalAllocated += res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED));
+            res.moveToNext();
+
+        }
+
+        return totalAllocated;
+
     }
 
     public int getNoRows() {
