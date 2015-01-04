@@ -79,8 +79,15 @@ public class AddItemActivity extends ActionBarActivity {
                 text = "Amount exceeds remaining allocatable budget, please try again!";
                 Toast.makeText(context, text, duration).show();
             } else {
-                myDb.insertLineItem(name, Integer.parseInt(amountStr), 0);
-                finish();
+
+                if(myDb.checkNameExists(name)) {
+                    text = "Item with that name already exists, please try again!";
+                    Toast.makeText(context, text, duration).show();
+                } else {
+                    myDb.insertLineItem(name, Integer.parseInt(amountStr), 0);
+                    finish();
+                }
+
             }
 
         }

@@ -8,7 +8,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.containers.ItemHistory;
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 
@@ -16,6 +19,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
     private LineItem myItem;
     private TextView overview, history;
+    private DBHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
         Bundle b = getIntent().getExtras();
 
-        DBHelper myDb = DBHelper.getInstance(this);
+        myDb = DBHelper.getInstance(this);
 
         if(b != null) {
             String name = b.getString("ITEM_NAME");
@@ -44,7 +48,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
             if(myItem != null) {
                 setOverview();
-                setHistory();
+                setHistory(name);
             }
         }
         else {
@@ -86,11 +90,26 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
     }
 
-    public void setHistory() {
+    public void setHistory(String name) {
 
         history = (TextView) findViewById(R.id.item_history_content);
+        String content = "";
+        ItemHistory cur;
 
-        // set history here
+        ArrayList myHistory = myDb.getHistory(name);
+
+        if(myHistory.size() == 0)
+            history.setText("No expense history available");
+
+        for(int i=0; i < myHistory.size(); i++) {
+
+            cur = (ItemHistory) myHistory.get(i);
+
+            content = content + cur.name + "\t$" + cur.amount + ".00\t" + cur.date + "\n";
+
+        }
+
+        history.setText(content);
 
     }
 

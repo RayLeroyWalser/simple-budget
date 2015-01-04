@@ -88,7 +88,7 @@
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/budget_title"
+                    android:layout_below="@+id/item_history_title"
                     android:layout_alignParentStart="true" />
 
             </RelativeLayout>

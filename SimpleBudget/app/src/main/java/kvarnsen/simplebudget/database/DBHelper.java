@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.containers.ItemHistory;
 import kvarnsen.simplebudget.containers.LineItem;
 
 /**
@@ -64,6 +65,19 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean checkNameExists(String name) {
+
+        boolean result = false;
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor c = myDb.rawQuery("select * from budget where name='" + name + "'", null);
+
+        if(c.getCount() > 0)
+            result = true;
+
+        return result;
+    }
+
     public boolean insertLineItem(String name, int budgeted, int spent) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
@@ -77,6 +91,18 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("remaining", remaining);
 
         myDb.insert("budget", null, cv);
+
+        myDb.execSQL(
+                "create table " + name + " " +
+                        "(id integer primary key, name text, date text, amount integer)"
+        );
+
+        ContentValues historyCv = new ContentValues();
+        historyCv.put("name", "Test");
+        historyCv.put("date", "1/1");
+        historyCv.put("amount", 10);
+        myDb.insert(name, null, historyCv);
+
         return true;
     }
 
@@ -201,6 +227,40 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         return result;
+    }
+
+    /*
+        Creates an ArrayList of ItemHistory objects for ItemHistoryActivity to parse and display
+     */
+    public ArrayList getHistory(String name) {
+
+        ArrayList history = new ArrayList<ItemHistory>();
+        ItemHistory cur;
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from " + name, null);
+
+        if(res.getCount() <= 0) {
+            Log.w("History", "request failed"); // request failed with test case
+            return history;
+        }
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            cur = new ItemHistory(
+                res.getString(res.getColumnIndex("name")),
+                res.getString(res.getColumnIndex("date")),
+                res.getInt(res.getColumnIndex("amount"))
+            );
+
+            history.add(cur);
+
+            res.moveToNext();
+
+        }
+
+        return history;
     }
 
 
