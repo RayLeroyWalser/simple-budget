@@ -29,8 +29,12 @@
             android:label="@string/title_activity_budget_dialog" >
         </activity>
         <activity
-            android:name="kvarnsen.simplebudget.ui.ItemHistoryActivity"
+            android:name="kvarnsen.simplebudget.ItemHistoryActivity"
             android:label="@string/title_activity_item_history" >
+        </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.ExpenseActivity"
+            android:label="@string/title_activity_expense" >
         </activity>
     </application>
 

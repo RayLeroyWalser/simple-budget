@@ -2,6 +2,7 @@ package kvarnsen.simplebudget.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -97,12 +98,6 @@ public class DBHelper extends SQLiteOpenHelper {
                         "(id integer primary key, name text, date text, amount integer)"
         );
 
-        ContentValues historyCv = new ContentValues();
-        historyCv.put("name", "Test");
-        historyCv.put("date", "1/1");
-        historyCv.put("amount", 10);
-        myDb.insert(name, null, historyCv);
-
         return true;
     }
 
@@ -176,6 +171,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return true;
     }
+
 
     public int deleteLineItem(int id) {
 
@@ -263,8 +259,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return history;
     }
 
+    public boolean addHistoryExpense(String name, String date, String desc, int amount) {
 
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
 
+        cv.put("name", desc);
+        cv.put("date", date);
+        cv.put("amount", amount);
+
+        myDb.insert(name, null, cv);
+
+        updateItemState(name, amount);
+
+        return true;
+    }
+
+    public void updateItemState(String name, int spent) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from budget where name='" + name + "'", null);
+
+        res.moveToFirst();
+
+        updateLineItem(
+                res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)),
+                name,
+                res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED)),
+                (res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT)) + spent)
+        );
+
+    }
 
 
 

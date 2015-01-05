@@ -25,8 +25,7 @@ import java.util.ArrayList;
 
 import kvarnsen.simplebudget.database.DBHelper;
 import kvarnsen.simplebudget.ui.BudgetDialogFragment;
-import kvarnsen.simplebudget.ui.ItemHistoryActivity;
-import kvarnsen.simplebudget.ui.MainAdapter;
+import kvarnsen.simplebudget.adapters.MainAdapter;
 
 
 public class MainActivity extends ActionBarActivity implements BudgetDialogFragment.BudgetDialogListener{
@@ -107,21 +106,14 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     public void onResume() {
         super.onResume();
 
-        Log.w("SB", "Resume called");
-
-        if(db.getNoRows() != 0) {
-
-            myLineItems = db.getAllLineItems();
-            CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
-            placeholder.setVisibility(View.GONE);
-
-            mAdapter = new MainAdapter(myLineItems);
-            mRecyclerView.setAdapter(mAdapter);
-
-        }
+        initCards();
     }
 
     public void initCards() {
+
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+        curBudget = preferences.getInt("curBudget", 0);
+        totalSpent = preferences.getInt("curSpent", 0);
 
         TextView budgetContent = (TextView) budgetCard.findViewById(R.id.budget_content);
 
