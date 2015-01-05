@@ -17,5 +17,6 @@
     <string name="title_activity_item_history">ItemHistoryActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_expense">ExpenseActivity</string>
+    <string name="title_activity_adjust_budget">AdjustBudgetActivity</string>
 
 </resources>

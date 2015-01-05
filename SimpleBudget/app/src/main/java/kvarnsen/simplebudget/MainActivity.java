@@ -150,11 +150,22 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         boolean result = db.deleteDatabase();
 
         if(result) {
+
+            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt("curBudget", 0);
+            editor.putInt("curSpent", 0);
+            editor.commit();
+
             Context context = getApplicationContext();
             CharSequence text = "Database cleared";
             int duration = Toast.LENGTH_SHORT;
 
             Toast.makeText(context, text, duration).show();
+
+            DialogFragment fragment = new BudgetDialogFragment();
+            fragment.show(getSupportFragmentManager(), "budget");
+
         }
         else {
             Context context = getApplicationContext();
@@ -182,13 +193,23 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         startActivity(intent);
     }
 
+    public void adjustBudget(View v) {
 
+        Intent intent = new Intent(this, AdjustBudgetActivity.class);
+        startActivity(intent);
+
+    }
+
+
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
+    */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

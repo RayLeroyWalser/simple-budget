@@ -11,7 +11,20 @@
         android:id="@+id/item_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimaryDark"/>
+        android:background="?attr/colorPrimaryDark">
+
+        <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/ic_add"
+            android:contentDescription="Add new expense"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:onClick="addExpense"/>
+
+
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,9 +37,8 @@
             android:id="@+id/budget_card"
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:clickable="true"
-            android:onClick="addExpense">
+            android:layout_height="150dp"
+            >
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -53,16 +65,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/item_title"
-                    android:layout_alignParentStart="true" />
-
-                <TextView
-                    android:id="@+id/item_prompt"
-                    android:textAlignment="center"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Click to add expense"
-                    android:layout_below="@+id/item_content"
                     android:layout_alignParentStart="true" />
 
             </RelativeLayout>

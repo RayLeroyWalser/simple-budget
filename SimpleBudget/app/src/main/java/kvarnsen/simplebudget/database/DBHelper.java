@@ -291,6 +291,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean isOpen() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+
+        if(myDb.isOpen())
+            return true;
+        else
+            return false;
+
+    }
+
 
 
 }

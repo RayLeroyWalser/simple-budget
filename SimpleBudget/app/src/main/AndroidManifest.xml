@@ -36,6 +36,10 @@
             android:name="kvarnsen.simplebudget.ExpenseActivity"
             android:label="@string/title_activity_expense" >
         </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.AdjustBudgetActivity"
+            android:label="@string/title_activity_adjust_budget" >
+        </activity>
     </application>
 
 </manifest>
