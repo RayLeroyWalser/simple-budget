@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/*
+    Prompts user to enter a new budget. Called from MainActivity's drawer.
+ */
 
 public class AdjustBudgetActivity extends ActionBarActivity {
 
@@ -35,7 +38,10 @@ public class AdjustBudgetActivity extends ActionBarActivity {
 
     }
 
-    public void submitBudget(View v) {
+    /*
+        Called by button click in layout file.
+     */
+    public void onSubmit(View v) {
 
         EditText amountHolder = (EditText) findViewById(R.id.amount);
         int newBudget = Integer.parseInt(amountHolder.getText().toString());

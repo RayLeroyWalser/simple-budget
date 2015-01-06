@@ -255,5 +255,4 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         exit();
 
     }
-
 }

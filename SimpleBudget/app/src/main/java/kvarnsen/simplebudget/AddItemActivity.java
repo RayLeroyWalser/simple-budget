@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -14,6 +13,10 @@ import android.widget.Toast;
 
 import kvarnsen.simplebudget.database.DBHelper;
 
+/*
+    A dialog-like activity that prompts a user to enter an name and amount for
+    a new line item.
+ */
 
 public class AddItemActivity extends ActionBarActivity {
 
@@ -41,7 +44,6 @@ public class AddItemActivity extends ActionBarActivity {
 
         myDb = DBHelper.getInstance(this);
 
-
     }
 
     public void onClick(View v) {
@@ -64,6 +66,7 @@ public class AddItemActivity extends ActionBarActivity {
         Log.w("Allocated", Integer.toString(allocated));
         Log.w("Amount Str", amountStr);
 
+        // basic input validation
         if(amountStr.equals("") || name.equals("")) {
 
             text = "Invalid input, please try again!";

@@ -1,31 +1,38 @@
 package kvarnsen.simplebudget;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.adapters.ItemHistoryAdapter;
 import kvarnsen.simplebudget.containers.ItemHistory;
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 
+/*
+    Displays expense history and overview for a specific line item.
+ */
+
 public class ItemHistoryActivity extends ActionBarActivity {
+
+    private final int REQUEST_NEW_NAME = 0;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private LineItem myItem;
+    private int itemSpent;
     private TextView overview, history;
     private DBHelper myDb;
     private String name;
@@ -69,7 +76,11 @@ public class ItemHistoryActivity extends ActionBarActivity {
         else {
             getSupportActionBar().setTitle("Item Name Not Found");
 
-            // some toast
+            Context context = getApplicationContext();
+            CharSequence text = "Item name was not provided";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast.makeText(context, text, duration).show();
 
             finish();
         }
@@ -101,9 +112,10 @@ public class ItemHistoryActivity extends ActionBarActivity {
     public void setOverview() {
 
         myItem = myDb.getLineItem(name);
+        itemSpent = myItem.spent;
 
         overview = (TextView) findViewById(R.id.item_content);
-        overview.setText("Budgeted: $" + myItem.budgeted + ".00\nSpent: $" + myItem.spent + ".00\nRemaining: $" + myItem.remaining + ".00\n\n");
+        overview.setText("Budgeted: $" + myItem.budgeted + ".00\nSpent: $" + itemSpent + ".00\nRemaining: $" + myItem.remaining + ".00\n\n");
 
     }
 
@@ -125,11 +137,29 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
     }
 
-    public void addExpense(View v) {
+    public void onAddExpenseClick(View v) {
 
-        Intent intent = new Intent(this, ExpenseActivity.class);
+        Intent intent = new Intent(this, AddExpenseActivity.class);
         intent.putExtra("ITEM_NAME", name);
         startActivity(intent);
+
+    }
+
+    public void onOverviewClick(View v) {
+
+        Intent intent = new Intent(this, AdjustItemActivity.class);
+        intent.putExtra("ITEM_NAME", name);
+        intent.putExtra("ITEM_SPENT", itemSpent);
+        startActivityForResult(intent, REQUEST_NEW_NAME);
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        name = data.getExtras().getString("ITEM_NAME");
+        getSupportActionBar().setTitle("Item Name: " + name);
 
     }
 

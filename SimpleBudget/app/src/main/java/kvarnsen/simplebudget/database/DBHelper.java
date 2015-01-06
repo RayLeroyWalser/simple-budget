@@ -236,7 +236,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = myDb.rawQuery("select * from " + name, null);
 
         if(res.getCount() <= 0) {
-            Log.w("History", "request failed"); // request failed with test case
+            Log.w("DBHelper", "request failed"); // request failed with test case
             return history;
         }
 
@@ -278,18 +278,49 @@ public class DBHelper extends SQLiteOpenHelper {
     public void updateItemState(String name, int spent) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
         Cursor res = myDb.rawQuery("select * from budget where name='" + name + "'", null);
 
         res.moveToFirst();
 
-        updateLineItem(
-                res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)),
-                name,
-                res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED)),
-                (res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT)) + spent)
-        );
+        int budget = res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED));
+        spent = (res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT)) + spent);
+        int remaining = budget - spent;
+
+        cv.put("name", name);
+        cv.put("budgeted", budget);
+        cv.put("spent", spent);
+        cv.put("remaining", remaining);
+
+        myDb.update("budget", cv, "id = ?", new String[] {
+                Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
+        });
 
     }
+
+    public void updateItem(String oldName, String newName, int newBudget, int spent) {
+
+        // update item in budget
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        Cursor res = myDb.rawQuery("select * from budget where name='" + oldName + "'", null);
+
+        res.moveToFirst();
+
+        cv.put("name", newName);
+        cv.put("budgeted", newBudget);
+        cv.put("spent", spent);
+        cv.put("remaining", (newBudget - spent));
+
+        myDb.update("budget", cv, "id = ?", new String[] {
+                Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
+        });
+
+        // update name of itemHistory table
+        myDb.execSQL("ALTER TABLE " + oldName + " RENAME TO " + newName);
+
+    }
+
 
     public boolean isOpen() {
 

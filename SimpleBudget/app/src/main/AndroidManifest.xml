@@ -33,12 +33,16 @@
             android:label="@string/title_activity_item_history" >
         </activity>
         <activity
-            android:name="kvarnsen.simplebudget.ExpenseActivity"
+            android:name="kvarnsen.simplebudget.AddExpenseActivity"
             android:label="@string/title_activity_expense" >
         </activity>
         <activity
             android:name="kvarnsen.simplebudget.AdjustBudgetActivity"
             android:label="@string/title_activity_adjust_budget" >
+        </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.AdjustItemActivity"
+            android:label="@string/title_activity_adjust_item" >
         </activity>
     </application>
 

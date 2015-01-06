@@ -17,8 +17,13 @@ import java.util.Calendar;
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 
+/*
+    A dialog-like activity that prompts a user to add a new expense for a line item.
 
-public class ExpenseActivity extends ActionBarActivity {
+    Started by ItemHistoryActivity.
+ */
+
+public class AddExpenseActivity extends ActionBarActivity {
 
     public static final String PREFS_NAME = "MyBudgetPrefs";
 
@@ -50,7 +55,11 @@ public class ExpenseActivity extends ActionBarActivity {
 
         } else {
 
-            // some toast
+            Context context = getApplicationContext();
+            CharSequence text = "Item name was not provided";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast.makeText(context, text, duration).show();
 
             finish();
         }
@@ -71,7 +80,7 @@ public class ExpenseActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addExpense(View v) {
+    public void onAddExpenseClick(View v) {
 
         Context context = getApplicationContext();
         CharSequence text;
@@ -120,6 +129,7 @@ public class ExpenseActivity extends ActionBarActivity {
 
     }
 
+    // convenience method to handle SharedPreferences updating of "spent" value
     public void updateBudget(int spent) {
 
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);

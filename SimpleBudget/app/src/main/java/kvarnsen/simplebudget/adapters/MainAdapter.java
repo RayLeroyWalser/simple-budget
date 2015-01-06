@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.MainActivity;
 import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.containers.LineItem;
 
@@ -52,7 +53,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         LineItem cur;
 
         CardView curCard = holder.mTextView;
-        curCard.setClickable(true);
+        curCard.setLongClickable(true);
+
+        curCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                return false;
+            }
+        });
 
         TextView curTitle = (TextView) curCard.findViewById(R.id.title);
         TextView curContent = (TextView) curCard.findViewById(R.id.content);
