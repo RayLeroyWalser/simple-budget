@@ -172,17 +172,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-
-    public int deleteLineItem(int id) {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-
-        return myDb.delete("budget", "id = ?", new String[] {
-                Integer.toString(id)
-        });
-
-    }
-
     public ArrayList getAllLineItems() {
 
         ArrayList lineItems = new ArrayList<LineItem>();
@@ -318,6 +307,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // update name of itemHistory table
         myDb.execSQL("ALTER TABLE " + oldName + " RENAME TO " + newName);
+
+    }
+
+    public void deleteLineItem(String itemName) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+
+        // delete from Budget
+        myDb.execSQL("DELETE FROM BUDGET WHERE NAME ='" + itemName + "'");
+
+        // delete Item table
+        myDb.execSQL("DROP TABLE " + itemName);
 
     }
 

@@ -57,6 +57,8 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:text="Delete Item"
+        android:clickable="true"
+        android:onClick="onDeleteItemClick"
         />
 
 </RelativeLayout>
