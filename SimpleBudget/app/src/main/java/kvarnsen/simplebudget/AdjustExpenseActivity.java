@@ -91,7 +91,10 @@ public class AdjustExpenseActivity extends ActionBarActivity {
 
             int newAmount = Integer.parseInt(newAmountStr);
 
-            if(newAmount > remaining) {
+            if(newAmount > (remaining + expenseAmount)) {   // calculates what the remaining would be minus this item
+
+                text = "Amount exceeds remaining budget for that item, please try again";
+                Toast.makeText(context, text, duration).show();
 
             } else {
 
