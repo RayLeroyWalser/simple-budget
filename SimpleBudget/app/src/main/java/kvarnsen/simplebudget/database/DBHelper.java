@@ -147,6 +147,26 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public int getTotalSpent() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from budget", null);
+
+        int totalSpent = 0;
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            totalSpent += res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT));
+            res.moveToNext();
+
+        }
+
+        return totalSpent;
+
+    }
+
     public int getNoRows() {
         SQLiteDatabase myDb = this.getWritableDatabase();
         int numRows = (int) DatabaseUtils.queryNumEntries(myDb, BUDGET_TABLE_NAME);
@@ -240,12 +260,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
         myDb.insert(tableName, null, cv);
 
-        updateItemState(name, amount);
+        updateItemState(tableName, name);
 
         return true;
     }
 
-    public void updateItemState(String name, int spent) {
+    public void updateItemState(String tableName, String name) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -254,7 +274,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         int budget = res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED));
-        spent = (res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT)) + spent);
+        int spent = getItemSpent(tableName);
         int remaining = budget - spent;
 
         cv.put("name", name);
@@ -266,6 +286,24 @@ public class DBHelper extends SQLiteOpenHelper {
                 Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
         });
 
+    }
+
+    public int getItemSpent(String tableName) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from " + tableName, null);
+
+        int spent = 0;
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+            spent += res.getInt(res.getColumnIndex("amount"));
+
+            res.moveToNext();
+        }
+
+        return spent;
     }
 
     public void updateItem(String tableName, String oldName, String newName, int newBudget, int spent) {
@@ -304,6 +342,26 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // delete Item table
         myDb.execSQL("DROP TABLE " + tableName);
+
+    }
+
+    public void updateExpense(String tableName, String itemName, String oldName, String newName, String date, int newAmount) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        Cursor res = myDb.rawQuery("select * from " + tableName + " where name='" + oldName + "'", null);
+
+        res.moveToFirst();
+
+        cv.put("name", newName);
+        cv.put("date", date);
+        cv.put("amount", newAmount);
+
+        myDb.update(tableName, cv, "id = ?", new String[] {
+                Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
+        });
+
+        updateItemState(tableName, itemName);
 
     }
 

@@ -19,5 +19,6 @@
     <string name="title_activity_expense">ExpenseActivity</string>
     <string name="title_activity_adjust_budget">AdjustBudgetActivity</string>
     <string name="title_activity_adjust_item">AdjustItemActivity</string>
+    <string name="title_activity_adjust_expense">AdjustExpenseActivity</string>
 
 </resources>

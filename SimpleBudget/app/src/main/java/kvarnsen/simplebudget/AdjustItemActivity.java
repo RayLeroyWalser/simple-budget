@@ -77,17 +77,17 @@ public class AdjustItemActivity extends ActionBarActivity {
         String newBudgetStr = newBudgetView.getText().toString();
         int newBudget;
 
-        if (newName.equals("") && newBudgetStr.equals("")) {
+        if(myDb.checkNameExists(newName)) {
+
+            text = "An item with that name already exists, please try again";
+            Toast.makeText(context, text, duration).show();
+
+        } else if (newName.equals("") && newBudgetStr.equals("")) {    // no name or amount
 
             text = "A name or amount must be specified!";
             Toast.makeText(context, text, duration).show();
 
-        } else if(!Character.isLetter(newName.charAt(0))) {
-
-            text = "Name must begin with a letter, please try again";
-            Toast.makeText(context, text, duration).show();
-
-        } else if(newName.equals("") && !newBudgetStr.equals("")) {
+        } else if(newName.equals("") && !newBudgetStr.equals("")) { // amount but no name
             newName = itemName;
             newBudget = Integer.parseInt(newBudgetStr);
 
@@ -104,18 +104,31 @@ public class AdjustItemActivity extends ActionBarActivity {
 
             }
 
-        } else if(!newName.equals("") && newBudgetStr.equals("")) {
+        } else if(!newName.equals("") && newBudgetStr.equals("")) { // name but no amount
             newBudget = itemBudget;
 
-            myDb.updateItem(trimString(itemName), itemName, newName, newBudget, itemSpent);
-            setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", newName));
-            finish();
+            if(!Character.isLetter(newName.charAt(0))) {
+
+                text = "Name must begin with a letter, please try again";
+                Toast.makeText(context, text, duration).show();
+
+            } else {
+                myDb.updateItem(trimString(itemName), itemName, newName, newBudget, itemSpent);
+                setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", newName));
+                finish();
+            }
+
         } else {
             newBudget = Integer.parseInt(newBudgetStr);
 
             if(newBudget < itemSpent) {
 
                 text = "New item budget exceeds amount already spent, please try again";
+                Toast.makeText(context, text, duration).show();
+
+            } else if(!Character.isLetter(newName.charAt(0))) {
+
+                text = "Name must begin with a letter, please try again";
                 Toast.makeText(context, text, duration).show();
 
             } else {

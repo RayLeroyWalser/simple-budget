@@ -1,0 +1,64 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    >
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/adjust_expense_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimaryDark"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="73dp"
+        android:layout_below="@+id/adjust_expense_toolbar"
+        android:layout_alignParentStart="true">
+
+        <EditText
+            android:id="@+id/name"
+            android:inputType="textCapSentences"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="New Name"/>
+        <EditText
+            android:id="@+id/amount"
+            android:inputType="numberDecimal"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="New Amount"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="onSubmitClick"
+            android:text="Apply Changes"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_above="@+id/deleteView"
+        android:layout_height="1dp"
+        android:background="#DADADA"/>
+
+    <TextView
+        android:id="@+id/deleteView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:text="Delete Expense"
+        android:clickable="true"
+        android:onClick="onDeleteExpenseClick"
+        />
+
+</RelativeLayout>

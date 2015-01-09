@@ -111,17 +111,15 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         curBudget = preferences.getInt("curBudget", 0);
-        totalSpent = preferences.getInt("curSpent", 0);
+        totalSpent = db.getTotalSpent();
 
         CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
         TextView budgeted = (TextView) budgetCard.findViewById(R.id.budgeted);
         TextView spent = (TextView) budgetCard.findViewById(R.id.spent);
         TextView remaining = (TextView) budgetCard.findViewById(R.id.remaining);
 
-        int allocated = db.getTotalAllocated();
-
         budgeted.setText("Budgeted: $" + Integer.toString(curBudget) + ".00");
-        spent.setText("Spent: $" + Integer.toString(totalSpent) + ".00");
+        spent.setText("Spent: $" + totalSpent + ".00");
         remaining.setText("Remaining: $" + Integer.toString(curBudget - totalSpent) + ".00");
 
         budgetCard.setVisibility(View.VISIBLE);
@@ -152,7 +150,6 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
             SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt("curBudget", 0);
-            editor.putInt("curSpent", 0);
             editor.commit();
 
             Context context = getApplicationContext();

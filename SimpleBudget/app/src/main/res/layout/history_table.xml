@@ -2,21 +2,20 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:onClick="onHistoryClick"
     android:stretchColumns="0,1,2">
     <TableRow>
         <TextView
             android:id="@+id/history_date"
-            android:text="test"
             android:gravity="center"
             android:padding="3dip" />
         <TextView
             android:id="@+id/history_name"
-            android:text="test"
             android:gravity="center"
             android:padding="3dip" />
         <TextView
             android:id="@+id/history_amount"
-            android:text="test"
             android:gravity="center"
             android:padding="3dip" />
     </TableRow>

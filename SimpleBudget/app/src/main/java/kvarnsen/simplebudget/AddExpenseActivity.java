@@ -90,7 +90,7 @@ public class AddExpenseActivity extends ActionBarActivity {
         EditText amountHolder = (EditText) findViewById(R.id.amount);
 
         String desc = descHolder.getText().toString();
-        int amount = Integer.parseInt(amountHolder.getText().toString());
+        String amountStr = amountHolder.getText().toString();
 
         // get current date
         Calendar c = Calendar.getInstance();
@@ -101,28 +101,39 @@ public class AddExpenseActivity extends ActionBarActivity {
         DBHelper myDb = DBHelper.getInstance(this);
         item = myDb.getLineItem(itemName);
 
-        // validate that expense does not exceed budget
-        if(!(amount > item.remaining)) {
+        if(desc.equals("") || amountStr.equals("")) {
 
-            boolean result = myDb.addHistoryExpense(trimString(itemName), itemName, date, desc, amount);
+            text = "Both a description and an amount must be entered, please try again!";
+            Toast.makeText(context, text, duration).show();
 
-            if(result) {
-                updateBudget(amount);
+        } else {
 
-                text = "Expense added!";
+            int amount = Integer.parseInt(amountStr);
+
+            if(!Character.isLetter(desc.charAt(0))) {
+
+                text = "Name must begin with a letter, please try again";
                 Toast.makeText(context, text, duration).show();
-                finish();
+
+            } else if(Integer.parseInt(amountStr) > item.remaining) {
+
+                text = "Expense exceeds remaining budget for that item, please try again!";
+                Toast.makeText(context, text, duration).show();
 
             } else {
 
-                text = "Failed to add expense";
-                Toast.makeText(context, text, duration).show();
-                finish();
-            }
+                boolean result = myDb.addHistoryExpense(trimString(itemName), itemName, date, desc, amount);
 
-        } else {
-            text = "Expense exceeds remaining budget for that item, please try again!";
-            Toast.makeText(context, text, duration).show();
+                if(result) {
+                    updateBudget(amount);
+
+                    text = "Expense added!";
+                    Toast.makeText(context, text, duration).show();
+                    finish();
+
+                }
+
+            }
 
         }
 

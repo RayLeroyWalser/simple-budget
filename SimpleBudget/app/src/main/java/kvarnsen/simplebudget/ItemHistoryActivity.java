@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,7 @@ import kvarnsen.simplebudget.database.DBHelper;
 
 public class ItemHistoryActivity extends ActionBarActivity {
 
-    private final int REQUEST_NEW_NAME = 0;
+    private final int REQUEST_ITEM_ADJUSTMENT = 0;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -66,7 +67,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
         if(b != null) {
             name = b.getString("ITEM_NAME");
-            getSupportActionBar().setTitle("Item Name: " + name);
+            getSupportActionBar().setTitle("Item: " + name);
 
             tableName = trimString(name);
 
@@ -116,7 +117,6 @@ public class ItemHistoryActivity extends ActionBarActivity {
     public void setOverview() {
 
         myItem = myDb.getLineItem(name);
-        Log.w("ItemHistoryAct", name);
         itemSpent = myItem.spent;
 
         TextView budgeted = (TextView) findViewById(R.id.budgeted);
@@ -161,8 +161,26 @@ public class ItemHistoryActivity extends ActionBarActivity {
         intent.putExtra("ITEM_NAME", name);
         intent.putExtra("ITEM_BUDGET", myItem.budgeted);
         intent.putExtra("ITEM_SPENT", itemSpent);
-        startActivityForResult(intent, REQUEST_NEW_NAME);
+        startActivityForResult(intent, REQUEST_ITEM_ADJUSTMENT);
 
+    }
+
+    public void onHistoryClick(View v) {
+
+        TableLayout table = (TableLayout) v;
+
+        String expName = ((TextView) table.findViewById(R.id.history_name)).getText().toString();
+        String expDate = ((TextView) table.findViewById(R.id.history_date)).getText().toString();
+        int expAmount = trimExpenseAmount(((TextView) table.findViewById(R.id.history_amount)).getText().toString());
+
+        Intent intent = new Intent(this, AdjustExpenseActivity.class);
+        intent.putExtra("EXPENSE_NAME", expName);
+        intent.putExtra("EXPENSE_DATE", expDate);
+        intent.putExtra("EXPENSE_AMOUNT", expAmount);
+        intent.putExtra("ITEM_NAME", name);
+        intent.putExtra("TABLE_NAME", tableName);
+        intent.putExtra("ITEM_REMAINING", (myItem.budgeted - itemSpent));
+        startActivity(intent);
 
     }
 
@@ -181,6 +199,17 @@ public class ItemHistoryActivity extends ActionBarActivity {
         newStr = newStr.replaceAll("\\s+", "");
 
         return newStr;
+    }
+
+    public int trimExpenseAmount(String str) {
+
+        String noDollar = str.substring(1);
+        String[] noDecimals = noDollar.split("\\.");
+
+        int trimmed = Integer.parseInt(noDecimals[0]);
+
+        return trimmed;
+
     }
 
 }

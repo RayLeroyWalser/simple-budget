@@ -71,7 +71,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         cur = (LineItem) mDataset.get(position);
 
         curTitle.setText(cur.name);
-
         curBudget.setText("Budgeted: $" + Integer.toString(cur.budgeted) + ".00");
         curSpent.setText("Spent: $" + Integer.toString(cur.spent) + ".00");
         curRemaining.setText("Remaining: $" + Integer.toString(cur.budgeted - cur.spent) + ".00");
