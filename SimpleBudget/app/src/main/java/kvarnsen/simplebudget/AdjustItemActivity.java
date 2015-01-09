@@ -107,7 +107,7 @@ public class AdjustItemActivity extends ActionBarActivity {
         } else if(!newName.equals("") && newBudgetStr.equals("")) { // name but no amount
             newBudget = itemBudget;
 
-            if(!newName.matches("[a-zA-z]+")) {
+            if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
 
                 text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
@@ -126,7 +126,7 @@ public class AdjustItemActivity extends ActionBarActivity {
                 text = "New item budget exceeds amount already spent, please try again";
                 Toast.makeText(context, text, duration).show();
 
-            } else if(!newName.matches("[a-zA-z]+")) {
+            } else if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
 
                 text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
@@ -155,7 +155,7 @@ public class AdjustItemActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 Context context = getApplicationContext();
-                CharSequence text = "Expense deleted";
+                CharSequence text = "Item deleted";
                 int duration = Toast.LENGTH_SHORT;
 
                 // delete item from Budget table, and delete Item Table
@@ -163,6 +163,7 @@ public class AdjustItemActivity extends ActionBarActivity {
 
                 Toast.makeText(context, text, duration).show();
                 // return to main activity
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
 
             }

@@ -76,7 +76,7 @@ public class AdjustExpenseActivity extends ActionBarActivity {
             Toast.makeText(context, text, duration).show();
         } else if(!newName.equals("") && newAmountStr.equals("")) {
 
-            if(!newName.matches("[a-zA-z]+")) {
+            if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
                 text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
             } else {
@@ -108,7 +108,7 @@ public class AdjustExpenseActivity extends ActionBarActivity {
                 }
                 else {
 
-                    if(!newName.matches("[a-zA-z]+")) {
+                    if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
                         text = "Name can only contain letters, please try again";
                         Toast.makeText(context, text, duration).show();
                     } else {

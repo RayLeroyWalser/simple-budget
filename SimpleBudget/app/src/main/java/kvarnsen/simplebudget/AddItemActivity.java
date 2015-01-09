@@ -69,7 +69,7 @@ public class AddItemActivity extends ActionBarActivity {
             text = "Invalid input, please try again!";
             Toast.makeText(context, text, duration).show();
 
-        } else if(!name.matches("[a-zA-z]+")) {
+        } else if(!(name.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
 
             text = "Item name can only contain letters, please try again!";
             Toast.makeText(context, text, duration).show();
