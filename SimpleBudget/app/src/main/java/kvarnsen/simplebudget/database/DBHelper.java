@@ -365,6 +365,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteExpense(String tableName, String itemName, String expenseName) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+
+        myDb.execSQL("DELETE FROM " + tableName + " WHERE NAME ='" + expenseName + "'");
+
+        updateItemState(tableName, itemName);
+
+    }
 
     public boolean isOpen() {
 

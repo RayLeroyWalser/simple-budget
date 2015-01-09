@@ -117,7 +117,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
     public void setOverview() {
 
         myItem = myDb.getLineItem(name);
-        itemSpent = myItem.spent;
+        itemSpent = myDb.getItemSpent(tableName);
 
         TextView budgeted = (TextView) findViewById(R.id.budgeted);
         TextView spent = (TextView) findViewById(R.id.spent);

@@ -155,7 +155,7 @@ public class AdjustItemActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 Context context = getApplicationContext();
-                CharSequence text = "Item deleted";
+                CharSequence text = "Expense deleted";
                 int duration = Toast.LENGTH_SHORT;
 
                 // delete item from Budget table, and delete Item Table

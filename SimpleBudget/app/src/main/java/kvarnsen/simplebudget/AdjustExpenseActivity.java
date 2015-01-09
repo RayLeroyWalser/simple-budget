@@ -1,7 +1,9 @@
 package kvarnsen.simplebudget;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -121,25 +123,36 @@ public class AdjustExpenseActivity extends ActionBarActivity {
 
         }
 
-            // no name or amount
-
-            // name, no amount
-
-            // no name, amount
-
-                // amount not exceeding item spent
-
-                // amount not exceeding item budget
-
-            // name and amount
-
-                // amount not exceeding item spent
-
-                // amount not exceeding item budget
-
     }
 
     public void onDeleteExpenseClick(View v) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                AdjustExpenseActivity.this);
+
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Context context = getApplicationContext();
+                CharSequence text = "Item deleted";
+                int duration = Toast.LENGTH_SHORT;
+
+                myDb.deleteExpense(tableName, itemName, expenseName);
+
+                Toast.makeText(context, text, duration).show();
+                finish();
+
+            }
+
+        });
+
+        alertDialog.setNegativeButton("No", null);
+        alertDialog.setMessage("Are you sure you want to delete this expense?");
+        alertDialog.setTitle(R.string.app_name);
+        alertDialog.show();
+
 
     }
 
