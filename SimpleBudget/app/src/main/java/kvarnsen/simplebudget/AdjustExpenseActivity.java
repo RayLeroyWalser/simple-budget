@@ -76,8 +76,8 @@ public class AdjustExpenseActivity extends ActionBarActivity {
             Toast.makeText(context, text, duration).show();
         } else if(!newName.equals("") && newAmountStr.equals("")) {
 
-            if(Character.isLetter(newName.charAt(0))) {
-                text = "Name must start with a letter, please try again";
+            if(!newName.matches("[a-zA-z]+")) {
+                text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
             } else {
                 myDb.updateExpense(tableName, itemName, expenseName, newName, expenseDate, expenseAmount);
@@ -108,8 +108,8 @@ public class AdjustExpenseActivity extends ActionBarActivity {
                 }
                 else {
 
-                    if(!Character.isLetter(newName.charAt(0))) {
-                        text = "Name must start with a letter, please try again";
+                    if(!newName.matches("[a-zA-z]+")) {
+                        text = "Name can only contain letters, please try again";
                         Toast.makeText(context, text, duration).show();
                     } else {
                         myDb.updateExpense(tableName, itemName, expenseName, newName, expenseDate, newAmount);

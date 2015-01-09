@@ -110,9 +110,9 @@ public class AddExpenseActivity extends ActionBarActivity {
 
             int amount = Integer.parseInt(amountStr);
 
-            if(!Character.isLetter(desc.charAt(0))) {
+            if(!desc.matches("[a-zA-z]+")) {
 
-                text = "Name must begin with a letter, please try again";
+                text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
 
             } else if(Integer.parseInt(amountStr) > item.remaining) {

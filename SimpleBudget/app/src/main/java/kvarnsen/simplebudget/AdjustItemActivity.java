@@ -107,9 +107,9 @@ public class AdjustItemActivity extends ActionBarActivity {
         } else if(!newName.equals("") && newBudgetStr.equals("")) { // name but no amount
             newBudget = itemBudget;
 
-            if(!Character.isLetter(newName.charAt(0))) {
+            if(!newName.matches("[a-zA-z]+")) {
 
-                text = "Name must begin with a letter, please try again";
+                text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
 
             } else {
@@ -126,9 +126,9 @@ public class AdjustItemActivity extends ActionBarActivity {
                 text = "New item budget exceeds amount already spent, please try again";
                 Toast.makeText(context, text, duration).show();
 
-            } else if(!Character.isLetter(newName.charAt(0))) {
+            } else if(!newName.matches("[a-zA-z]+")) {
 
-                text = "Name must begin with a letter, please try again";
+                text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
 
             } else {

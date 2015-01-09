@@ -135,8 +135,6 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
         ArrayList myHistory = myDb.getHistory(name);
 
-        Log.w("History Size", Integer.toString(myHistory.size()));
-
         if(myHistory.size() != 0) {
             history.setVisibility(View.GONE);
 

@@ -52,7 +52,7 @@ public class AddItemActivity extends ActionBarActivity {
         EditText amountView = (EditText) findViewById(R.id.amount);
 
         String name = nameView.getText().toString();
-        String tableName = trimString(name);
+        String tableName;
         String amountStr = amountView.getText().toString();
 
         Context context = getApplicationContext();
@@ -69,9 +69,9 @@ public class AddItemActivity extends ActionBarActivity {
             text = "Invalid input, please try again!";
             Toast.makeText(context, text, duration).show();
 
-        } else if(!Character.isLetter(name.charAt(0))) {
+        } else if(!name.matches("[a-zA-z]+")) {
 
-            text = "Name must begin with a letter, please try again";
+            text = "Item name can only contain letters, please try again!";
             Toast.makeText(context, text, duration).show();
 
         } else {
@@ -89,6 +89,9 @@ public class AddItemActivity extends ActionBarActivity {
                     text = "Item with that name already exists, please try again!";
                     Toast.makeText(context, text, duration).show();
                 } else {
+
+                    tableName = trimString(name);
+
                     myDb.insertLineItem(tableName, name, Integer.parseInt(amountStr), 0);
 
                     text = "Item added. $" + Integer.toString(curBudget - myDb.getTotalAllocated()) + ".00 remaining to be allocated.";
@@ -107,8 +110,8 @@ public class AddItemActivity extends ActionBarActivity {
 
     public String trimString(String str) {
 
-        String newStr = str.toLowerCase();
-        newStr = newStr.replaceAll("\\s+", "");
+        String newStr = str.replaceAll("\\s+", "");
+        newStr = newStr.toLowerCase();
 
         return newStr;
     }
