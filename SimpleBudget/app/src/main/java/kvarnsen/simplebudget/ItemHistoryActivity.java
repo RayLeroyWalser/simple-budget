@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
     private TextView overview, history;
     private DBHelper myDb;
     private String name;
+    private String tableName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +68,13 @@ public class ItemHistoryActivity extends ActionBarActivity {
             name = b.getString("ITEM_NAME");
             getSupportActionBar().setTitle("Item Name: " + name);
 
+            tableName = trimString(name);
+
             myItem = myDb.getLineItem(name);
 
             if(myItem != null) {
                 setOverview();
-                setHistory(name);
+                setHistory(tableName);
             }
         }
         else {
@@ -91,7 +95,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
         super.onResume();
 
         setOverview();
-        setHistory(name);
+        setHistory(tableName);
     }
 
     @Override
@@ -112,10 +116,16 @@ public class ItemHistoryActivity extends ActionBarActivity {
     public void setOverview() {
 
         myItem = myDb.getLineItem(name);
+        Log.w("ItemHistoryAct", name);
         itemSpent = myItem.spent;
 
-        overview = (TextView) findViewById(R.id.item_content);
-        overview.setText("Budgeted: $" + myItem.budgeted + ".00\nSpent: $" + itemSpent + ".00\nRemaining: $" + myItem.remaining + ".00\n\n");
+        TextView budgeted = (TextView) findViewById(R.id.budgeted);
+        TextView spent = (TextView) findViewById(R.id.spent);
+        TextView remaining = (TextView) findViewById(R.id.remaining);
+
+        budgeted.setText("Budgeted: $" + Integer.toString(myItem.budgeted) + ".00");
+        spent.setText("Spent: $" + Integer.toString(itemSpent) + ".00");
+        remaining.setText("Remaining: $" + Integer.toString(myItem.budgeted - itemSpent) + ".00");
 
     }
 
@@ -149,6 +159,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
         Intent intent = new Intent(this, AdjustItemActivity.class);
         intent.putExtra("ITEM_NAME", name);
+        intent.putExtra("ITEM_BUDGET", myItem.budgeted);
         intent.putExtra("ITEM_SPENT", itemSpent);
         startActivityForResult(intent, REQUEST_NEW_NAME);
 
@@ -159,8 +170,17 @@ public class ItemHistoryActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         name = data.getExtras().getString("ITEM_NAME");
+        tableName = trimString(name);
         getSupportActionBar().setTitle("Item Name: " + name);
 
+    }
+
+    public String trimString(String str) {
+
+        String newStr = str.toLowerCase();
+        newStr = newStr.replaceAll("\\s+", "");
+
+        return newStr;
     }
 
 }

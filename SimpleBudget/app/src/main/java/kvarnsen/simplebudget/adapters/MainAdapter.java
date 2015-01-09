@@ -64,15 +64,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         });
 
         TextView curTitle = (TextView) curCard.findViewById(R.id.title);
-        TextView curContent = (TextView) curCard.findViewById(R.id.content);
+        TextView curBudget = (TextView) curCard.findViewById(R.id.budgeted);
+        TextView curSpent = (TextView) curCard.findViewById(R.id.spent);
+        TextView curRemaining = (TextView) curCard.findViewById(R.id.remaining);
 
         cur = (LineItem) mDataset.get(position);
 
         curTitle.setText(cur.name);
-        curContent.setText(
-                "Budgeted: $" + Integer.toString(cur.budgeted) + ".00\nSpent: $" + Integer.toString(cur.spent) + ".00\n"
-                        + "Remaining: $" + Integer.toString(cur.remaining) + ".00\n"
-        );
+
+        curBudget.setText("Budgeted: $" + Integer.toString(cur.budgeted) + ".00");
+        curSpent.setText("Spent: $" + Integer.toString(cur.spent) + ".00");
+        curRemaining.setText("Remaining: $" + Integer.toString(cur.budgeted - cur.spent) + ".00");
 
     }
 

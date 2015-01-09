@@ -79,7 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public boolean insertLineItem(String name, int budgeted, int spent) {
+    public boolean insertLineItem(String tableName, String name, int budgeted, int spent) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -94,7 +94,7 @@ public class DBHelper extends SQLiteOpenHelper {
         myDb.insert("budget", null, cv);
 
         myDb.execSQL(
-                "create table " + name + " " +
+                "create table " + tableName + " " +
                         "(id integer primary key, name text, date text, amount integer)"
         );
 
@@ -153,25 +153,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public boolean updateLineItem(int id, String name, int budgeted, int spent) {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
-        int remaining = budgeted - spent;
-
-        cv.put("name", name);
-        cv.put("budgeted", budgeted);
-        cv.put("spent", spent);
-        cv.put("remaining", remaining);
-
-        myDb.update("budget", cv, "id = ?", new String[] {
-                Integer.toString(id)
-        });
-
-        return true;
-    }
-
     public ArrayList getAllLineItems() {
 
         ArrayList lineItems = new ArrayList<LineItem>();
@@ -217,12 +198,12 @@ public class DBHelper extends SQLiteOpenHelper {
     /*
         Creates an ArrayList of ItemHistory objects for ItemHistoryActivity to parse and display
      */
-    public ArrayList getHistory(String name) {
+    public ArrayList getHistory(String tableName) {
 
         ArrayList history = new ArrayList<ItemHistory>();
         ItemHistory cur;
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from " + name, null);
+        Cursor res = myDb.rawQuery("select * from " + tableName, null);
 
         if(res.getCount() <= 0) {
             Log.w("DBHelper", "request failed"); // request failed with test case
@@ -248,7 +229,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return history;
     }
 
-    public boolean addHistoryExpense(String name, String date, String desc, int amount) {
+    public boolean addHistoryExpense(String tableName, String name, String date, String desc, int amount) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -257,7 +238,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("date", date);
         cv.put("amount", amount);
 
-        myDb.insert(name, null, cv);
+        myDb.insert(tableName, null, cv);
 
         updateItemState(name, amount);
 
@@ -287,7 +268,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void updateItem(String oldName, String newName, int newBudget, int spent) {
+    public void updateItem(String tableName, String oldName, String newName, int newBudget, int spent) {
 
         // update item in budget
         SQLiteDatabase myDb = this.getWritableDatabase();
@@ -305,12 +286,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
         });
 
-        // update name of itemHistory table
-        myDb.execSQL("ALTER TABLE " + oldName + " RENAME TO " + newName);
+        newName = newName.toLowerCase();
+        newName = newName.replaceAll("\\s+", "");
+
+        if(!tableName.equals(newName))
+            // update name of itemHistory table
+            myDb.execSQL("ALTER TABLE " + tableName + " RENAME TO " + newName);
 
     }
 
-    public void deleteLineItem(String itemName) {
+    public void deleteLineItem(String itemName, String tableName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
 
@@ -318,7 +303,7 @@ public class DBHelper extends SQLiteOpenHelper {
         myDb.execSQL("DELETE FROM BUDGET WHERE NAME ='" + itemName + "'");
 
         // delete Item table
-        myDb.execSQL("DROP TABLE " + itemName);
+        myDb.execSQL("DROP TABLE " + tableName);
 
     }
 

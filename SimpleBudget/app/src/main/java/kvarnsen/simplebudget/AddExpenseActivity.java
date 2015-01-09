@@ -104,7 +104,7 @@ public class AddExpenseActivity extends ActionBarActivity {
         // validate that expense does not exceed budget
         if(!(amount > item.remaining)) {
 
-            boolean result = myDb.addHistoryExpense(itemName, date, desc, amount);
+            boolean result = myDb.addHistoryExpense(trimString(itemName), itemName, date, desc, amount);
 
             if(result) {
                 updateBudget(amount);
@@ -137,5 +137,13 @@ public class AddExpenseActivity extends ActionBarActivity {
         editor.putInt("curSpent", preferences.getInt("curSpent", 0) + spent);
         editor.commit();
 
+    }
+
+    public String trimString(String str) {
+
+        String newStr = str.toLowerCase();
+        newStr = newStr.replaceAll("\\s+", "");
+
+        return newStr;
     }
 }

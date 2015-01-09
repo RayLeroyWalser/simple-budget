@@ -56,6 +56,7 @@ public class BudgetDialogFragment extends DialogFragment {
 
                         Dialog myDialog = (Dialog) dialog;
                         EditText myEditText = (EditText) myDialog.findViewById(R.id.budgetDialog);
+
                         budget = Integer.parseInt(myEditText.getText().toString());
 
                         mListener.onDialogPositiveClick(BudgetDialogFragment.this);

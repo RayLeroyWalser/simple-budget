@@ -86,8 +86,6 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
 
-        Log.w("SB", "Dialog Positive clicked!");
-
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -115,27 +113,27 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         curBudget = preferences.getInt("curBudget", 0);
         totalSpent = preferences.getInt("curSpent", 0);
 
-        TextView budgetContent = (TextView) budgetCard.findViewById(R.id.budget_content);
+        CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
+        TextView budgeted = (TextView) budgetCard.findViewById(R.id.budgeted);
+        TextView spent = (TextView) budgetCard.findViewById(R.id.spent);
+        TextView remaining = (TextView) budgetCard.findViewById(R.id.remaining);
 
-        budgetContent.setText(
-                "Budgeted: $" + Integer.toString(curBudget) + ".00\nSpent: $" + Integer.toString(totalSpent) + ".00\n"
-                + "Remaining: $" + Integer.toString(curBudget - totalSpent) + ".00\n"
-        );
+        int allocated = db.getTotalAllocated();
+
+        budgeted.setText("Budgeted: $" + Integer.toString(curBudget) + ".00");
+        spent.setText("Spent: $" + Integer.toString(totalSpent) + ".00");
+        remaining.setText("Remaining: $" + Integer.toString(curBudget - totalSpent) + ".00");
 
         budgetCard.setVisibility(View.VISIBLE);
+        placeholder.setVisibility(View.VISIBLE);
 
-        if(db.getNoRows() != 0) {
-
-            myLineItems = db.getAllLineItems();
-            CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
+        if(db.getNoRows() != 0)
             placeholder.setVisibility(View.GONE);
 
-            mAdapter = new MainAdapter(myLineItems);
-            mRecyclerView.setAdapter(mAdapter);
+        myLineItems = db.getAllLineItems();
+        mAdapter = new MainAdapter(myLineItems);
+        mRecyclerView.setAdapter(mAdapter);
 
-        } else {
-            Log.w("SB", "Database empty");
-        }
     }
 
     public void addLineItem(View v) {
@@ -165,6 +163,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
             DialogFragment fragment = new BudgetDialogFragment();
             fragment.show(getSupportFragmentManager(), "budget");
+
 
         }
         else {
@@ -200,16 +199,6 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     }
 
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
-    }
-    */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

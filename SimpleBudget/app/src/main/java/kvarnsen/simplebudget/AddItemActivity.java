@@ -28,7 +28,7 @@ public class AddItemActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item);
+        setContentView(R.layout.activity_add_item);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.item_toolbar);
         setSupportActionBar(toolbar);
@@ -52,6 +52,7 @@ public class AddItemActivity extends ActionBarActivity {
         EditText amountView = (EditText) findViewById(R.id.amount);
 
         String name = nameView.getText().toString();
+        String tableName = trimString(name);
         String amountStr = amountView.getText().toString();
 
         Context context = getApplicationContext();
@@ -62,14 +63,15 @@ public class AddItemActivity extends ActionBarActivity {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         curBudget = preferences.getInt("curBudget", 0);
 
-        Log.w("Cur Budget", Integer.toString(curBudget));
-        Log.w("Allocated", Integer.toString(allocated));
-        Log.w("Amount Str", amountStr);
-
         // basic input validation
         if(amountStr.equals("") || name.equals("")) {
 
             text = "Invalid input, please try again!";
+            Toast.makeText(context, text, duration).show();
+
+        } else if(!Character.isLetter(name.charAt(0))) {
+
+            text = "Name must begin with a letter, please try again";
             Toast.makeText(context, text, duration).show();
 
         } else {
@@ -87,7 +89,11 @@ public class AddItemActivity extends ActionBarActivity {
                     text = "Item with that name already exists, please try again!";
                     Toast.makeText(context, text, duration).show();
                 } else {
-                    myDb.insertLineItem(name, Integer.parseInt(amountStr), 0);
+                    myDb.insertLineItem(tableName, name, Integer.parseInt(amountStr), 0);
+
+                    text = "Item added. $" + Integer.toString(curBudget - myDb.getTotalAllocated()) + ".00 remaining to be allocated.";
+                    duration = Toast.LENGTH_LONG;
+                    Toast.makeText(context, text, duration).show();
                     finish();
                 }
 
@@ -96,6 +102,15 @@ public class AddItemActivity extends ActionBarActivity {
         }
 
 
+    }
+
+
+    public String trimString(String str) {
+
+        String newStr = str.toLowerCase();
+        newStr = newStr.replaceAll("\\s+", "");
+
+        return newStr;
     }
 
     @Override
