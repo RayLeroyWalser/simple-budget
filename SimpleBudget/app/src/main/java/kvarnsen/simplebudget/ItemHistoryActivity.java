@@ -132,17 +132,23 @@ public class ItemHistoryActivity extends ActionBarActivity {
     public void setHistory(String name) {
 
         history = (TextView) findViewById(R.id.item_history_placeholder);
-        String content = "";
-        ItemHistory cur;
 
         ArrayList myHistory = myDb.getHistory(name);
+
+        Log.w("History Size", Integer.toString(myHistory.size()));
 
         if(myHistory.size() != 0) {
             history.setVisibility(View.GONE);
 
             mAdapter = new ItemHistoryAdapter(myHistory);
             mRecyclerView.setAdapter(mAdapter);
+        } else {
+
+            history.setVisibility(View.VISIBLE);
+            mRecyclerView.setAdapter(null);
+
         }
+
 
 
     }
