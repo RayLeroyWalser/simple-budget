@@ -143,33 +143,51 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     public void deleteDatabase(View v) {
 
-        boolean result = db.deleteDatabase();
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                MainActivity.this);
 
-        if(result) {
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt("curBudget", 0);
-            editor.commit();
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-            Context context = getApplicationContext();
-            CharSequence text = "Database cleared";
-            int duration = Toast.LENGTH_SHORT;
+                boolean result = db.deleteDatabase();
 
-            Toast.makeText(context, text, duration).show();
+                if(result) {
 
-            DialogFragment fragment = new BudgetDialogFragment();
-            fragment.show(getSupportFragmentManager(), "budget");
+                    SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putInt("curBudget", 0);
+                    editor.commit();
+
+                    Context context = getApplicationContext();
+                    CharSequence text = "Database cleared";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast.makeText(context, text, duration).show();
+
+                    DialogFragment fragment = new BudgetDialogFragment();
+                    fragment.show(getSupportFragmentManager(), "budget");
 
 
-        }
-        else {
-            Context context = getApplicationContext();
-            CharSequence text = "Database failed to clear";
-            int duration = Toast.LENGTH_SHORT;
+                }
+                else {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Database failed to clear";
+                    int duration = Toast.LENGTH_SHORT;
 
-            Toast.makeText(context, text, duration).show();
-        }
+                    Toast.makeText(context, text, duration).show();
+                }
+
+
+            }
+
+        });
+
+        alertDialog.setNegativeButton("No", null);
+        alertDialog.setMessage("Are you sure you want to clear your budget?\n\nAll items and expenses will be lost!");
+        alertDialog.setTitle(R.string.app_name);
+        alertDialog.show();
 
     }
 
