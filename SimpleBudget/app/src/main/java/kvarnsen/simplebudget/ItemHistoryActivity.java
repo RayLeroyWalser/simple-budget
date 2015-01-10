@@ -2,12 +2,14 @@ package kvarnsen.simplebudget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TableLayout;
@@ -55,7 +57,21 @@ public class ItemHistoryActivity extends ActionBarActivity {
             }
         });
 
-        Bundle b = getIntent().getExtras();
+        View.OnLongClickListener listener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                vb.vibrate(1000);
+
+                Toast toast = Toast.makeText(getApplicationContext(), v.getContentDescription(), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                toast.show();
+                return true;
+            }
+        };
+
+        findViewById(R.id.add_expense_button).setOnLongClickListener(listener);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.item_history_recycler);
         mRecyclerView.setHasFixedSize(true);
@@ -64,6 +80,8 @@ public class ItemHistoryActivity extends ActionBarActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         myDb = DBHelper.getInstance(this);
+
+        Bundle b = getIntent().getExtras();
 
         if(b != null) {
             name = b.getString("ITEM_NAME");

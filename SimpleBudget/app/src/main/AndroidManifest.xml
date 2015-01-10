@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kvarnsen.simplebudget" >
+    
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -23,10 +25,6 @@
         <activity
             android:name="kvarnsen.simplebudget.SettingsActivity"
             android:label="@string/title_activity_settings" >
-        </activity>
-        <activity
-            android:name="kvarnsen.simplebudget.ui.BudgetDialogActivity"
-            android:label="@string/title_activity_budget_dialog" >
         </activity>
         <activity
             android:name="kvarnsen.simplebudget.ItemHistoryActivity"
