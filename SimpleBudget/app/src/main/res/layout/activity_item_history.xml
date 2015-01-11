@@ -107,7 +107,7 @@
             android:id="@+id/item_history"
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="250dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -142,7 +142,7 @@
                     android:layout_below="@+id/item_history_title"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="150dp"/>
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
