@@ -8,16 +8,15 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import kvarnsen.simplebudget.database.DBHelper;
 
-
+/*
+    Dialog to allow user to adjust an expense's amount and/or name
+ */
 public class AdjustExpenseActivity extends ActionBarActivity {
 
     private String expenseName;

@@ -4,6 +4,9 @@ package kvarnsen.simplebudget.containers;
  * Created by joshuapancho on 3/01/15.
  */
 
+/*
+    Holds info about an item.
+ */
 public class LineItem {
 
     public int id, budgeted, spent, remaining;

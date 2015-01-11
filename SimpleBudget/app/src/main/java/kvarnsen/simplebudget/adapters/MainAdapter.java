@@ -1,18 +1,14 @@
 package kvarnsen.simplebudget.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import kvarnsen.simplebudget.MainActivity;
 import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.containers.LineItem;
 
@@ -20,6 +16,9 @@ import kvarnsen.simplebudget.containers.LineItem;
  * Created by joshuapancho on 4/01/15.
  */
 
+/*
+    RecyclerView Adapter that displays line items in MainActivity
+ */
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private ArrayList mDataset;
 
@@ -53,15 +52,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         LineItem cur;
 
         CardView curCard = holder.mTextView;
-        curCard.setLongClickable(true);
-
-        curCard.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                return false;
-            }
-        });
 
         TextView curTitle = (TextView) curCard.findViewById(R.id.title);
         TextView curBudget = (TextView) curCard.findViewById(R.id.budgeted);

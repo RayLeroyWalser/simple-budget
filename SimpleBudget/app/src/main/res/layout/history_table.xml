@@ -4,19 +4,25 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:onClick="onHistoryClick"
-    android:stretchColumns="0,1,2">
+    android:stretchColumns="1">
     <TableRow>
         <TextView
             android:id="@+id/history_date"
             android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:padding="3dip" />
         <TextView
             android:id="@+id/history_name"
             android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:padding="3dip" />
         <TextView
             android:id="@+id/history_amount"
             android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:padding="3dip" />
     </TableRow>
  </TableLayout>

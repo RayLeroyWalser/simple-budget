@@ -41,8 +41,6 @@ public class AdjustItemActivity extends ActionBarActivity {
         itemBudget = b.getInt("ITEM_BUDGET");
         itemSpent = b.getInt("ITEM_SPENT");
 
-        Log.w("AdjustItem", "Spent: " + Integer.toString(itemSpent));
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.adjust_item_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Adjust Item: " + itemName);

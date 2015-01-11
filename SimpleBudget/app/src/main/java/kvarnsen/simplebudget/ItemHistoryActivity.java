@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -19,7 +17,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.adapters.ItemHistoryAdapter;
-import kvarnsen.simplebudget.containers.ItemHistory;
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 
@@ -37,7 +34,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
     private LineItem myItem;
     private int itemSpent;
-    private TextView overview, history;
+    private TextView history;
     private DBHelper myDb;
     private String name;
     private String tableName;
@@ -117,21 +114,9 @@ public class ItemHistoryActivity extends ActionBarActivity {
         setHistory(tableName);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+    /*
+        Sets overview card
+     */
     public void setOverview() {
 
         myItem = myDb.getLineItem(name);
@@ -147,11 +132,14 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
     }
 
+    /*
+        Set main content - RecyclerView of expenses
+     */
     public void setHistory(String name) {
 
         history = (TextView) findViewById(R.id.item_history_placeholder);
 
-        ArrayList myHistory = myDb.getHistory(name);
+        ArrayList myHistory = myDb.getExpenseHistory(name);
 
         if(myHistory.size() != 0) {
             history.setVisibility(View.GONE);

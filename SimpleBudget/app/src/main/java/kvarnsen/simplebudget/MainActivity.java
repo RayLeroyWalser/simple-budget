@@ -15,10 +15,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +39,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     ActionBarDrawerToggle mDrawerToggle;
     CardView budgetCard;
 
-    private int curBudget = 0;  // how much of the budget has been spent
+    private int curBudget = 0;
     private int totalSpent = 0;
 
     private ArrayList myLineItems;
@@ -57,7 +54,6 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         curBudget = preferences.getInt("curBudget", 0);
-        Log.w("SB", "curBudget: " + Integer.toString(curBudget));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
@@ -221,33 +217,11 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     }
 
-    public void onSettingsClick(View v) {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
     public void adjustBudget(View v) {
 
         Intent intent = new Intent(this, AdjustBudgetActivity.class);
         startActivity(intent);
 
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            onResume(); // buggy at the moment - noOfRows returning > 0
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     // code adapted from http://stackoverflow.com/questions/6290599/prompt-user-when-back-button-is-pressed

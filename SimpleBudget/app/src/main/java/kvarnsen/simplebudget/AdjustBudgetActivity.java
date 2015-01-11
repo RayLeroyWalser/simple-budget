@@ -5,14 +5,12 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 /*
-    Prompts user to enter a new budget. Called from MainActivity's drawer.
+    Prompts user to enter a new budget. Called from MainActivity.
  */
 
 public class AdjustBudgetActivity extends ActionBarActivity {

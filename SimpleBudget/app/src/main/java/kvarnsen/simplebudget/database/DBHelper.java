@@ -2,7 +2,6 @@ package kvarnsen.simplebudget.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,7 +10,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import kvarnsen.simplebudget.containers.ItemHistory;
+import kvarnsen.simplebudget.containers.Expense;
 import kvarnsen.simplebudget.containers.LineItem;
 
 /**
@@ -36,6 +35,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String BUDGET_ITEM_REMAINING = "remaining";
 
     Context myContext = null;
+
+    /***********************************************************
+     *
+     * OVERALL DATABASE FUNCTIONS
+     * Handles functionality to manage the database as a whole
+     *
+     ***********************************************************/
 
     public static DBHelper getInstance(Context context) {
 
@@ -78,6 +84,70 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return result;
     }
+
+    public int getTotalAllocated() {
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select budgeted from budget", null);
+
+        int totalAllocated = 0;
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            totalAllocated += res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED));
+            res.moveToNext();
+
+        }
+
+        return totalAllocated;
+
+    }
+
+    public int getTotalSpent() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from budget", null);
+
+        int totalSpent = 0;
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            totalSpent += res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT));
+            res.moveToNext();
+
+        }
+
+        return totalSpent;
+
+    }
+
+    public int getNoRows() {
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        int numRows = (int) DatabaseUtils.queryNumEntries(myDb, BUDGET_TABLE_NAME);
+        return numRows;
+    }
+
+    public boolean deleteDatabase() {
+
+        boolean result = false;
+
+        if(myContext != null) {
+            this.close();
+            result = myContext.deleteDatabase(DATABASE_NAME);
+        }
+
+        return result;
+    }
+
+    /*****************************************************************
+     *
+     * LINE ITEM FUNCTIONS
+     * Manages creation, deletion and manipulation of line items
+     *
+     *****************************************************************/
 
     public boolean insertLineItem(String tableName, String name, int budgeted, int spent) {
 
@@ -128,51 +198,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public int getTotalAllocated() {
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select budgeted from budget", null);
-
-        int totalAllocated = 0;
-
-        res.moveToFirst();
-
-        while(!res.isAfterLast()) {
-
-            totalAllocated += res.getInt(res.getColumnIndex(BUDGET_ITEM_BUDGETED));
-            res.moveToNext();
-
-        }
-
-        return totalAllocated;
-
-    }
-
-    public int getTotalSpent() {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from budget", null);
-
-        int totalSpent = 0;
-
-        res.moveToFirst();
-
-        while(!res.isAfterLast()) {
-
-            totalSpent += res.getInt(res.getColumnIndex(BUDGET_ITEM_SPENT));
-            res.moveToNext();
-
-        }
-
-        return totalSpent;
-
-    }
-
-    public int getNoRows() {
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(myDb, BUDGET_TABLE_NAME);
-        return numRows;
-    }
-
     public ArrayList getAllLineItems() {
 
         ArrayList lineItems = new ArrayList<LineItem>();
@@ -203,66 +228,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean deleteDatabase() {
+    public int getItemSpent(String tableName) {
 
-        boolean result = false;
-
-        if(myContext != null) {
-            this.close();
-            result = myContext.deleteDatabase(DATABASE_NAME);
-        }
-
-        return result;
-    }
-
-    /*
-        Creates an ArrayList of ItemHistory objects for ItemHistoryActivity to parse and display
-     */
-    public ArrayList getHistory(String tableName) {
-
-        ArrayList history = new ArrayList<ItemHistory>();
-        ItemHistory cur;
         SQLiteDatabase myDb = this.getWritableDatabase();
         Cursor res = myDb.rawQuery("select * from " + tableName, null);
 
-        if(res.getCount() <= 0) {
-            Log.w("DBHelper", "request failed"); // request failed with test case
-            return history;
-        }
+        int spent = 0;
 
         res.moveToFirst();
 
         while(!res.isAfterLast()) {
-
-            cur = new ItemHistory(
-                res.getString(res.getColumnIndex("name")),
-                res.getString(res.getColumnIndex("date")),
-                res.getInt(res.getColumnIndex("amount"))
-            );
-
-            history.add(cur);
+            spent += res.getInt(res.getColumnIndex("amount"));
 
             res.moveToNext();
-
         }
 
-        return history;
-    }
-
-    public boolean addHistoryExpense(String tableName, String name, String date, String desc, int amount) {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
-        cv.put("name", desc);
-        cv.put("date", date);
-        cv.put("amount", amount);
-
-        myDb.insert(tableName, null, cv);
-
-        updateItemState(tableName, name);
-
-        return true;
+        return spent;
     }
 
     public void updateItemState(String tableName, String name) {
@@ -286,24 +267,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
         });
 
-    }
-
-    public int getItemSpent(String tableName) {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from " + tableName, null);
-
-        int spent = 0;
-
-        res.moveToFirst();
-
-        while(!res.isAfterLast()) {
-            spent += res.getInt(res.getColumnIndex("amount"));
-
-            res.moveToNext();
-        }
-
-        return spent;
     }
 
     public void updateItem(String tableName, String oldName, String newName, int newBudget, int spent) {
@@ -345,6 +308,29 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /*****************************************************************
+     *
+     * EXPENSE FUNCTIONS
+     * Manages creation, deletion and manipulation of expenses
+     *
+     *****************************************************************/
+
+    public boolean addExpense(String tableName, String name, String date, String desc, int amount) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("name", desc);
+        cv.put("date", date);
+        cv.put("amount", amount);
+
+        myDb.insert(tableName, null, cv);
+
+        updateItemState(tableName, name);
+
+        return true;
+    }
+
     public void updateExpense(String tableName, String itemName, String oldName, String newName, String date, int newAmount) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
@@ -365,6 +351,40 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /*
+        Creates an ArrayList of Expense objects for ItemHistoryActivity to parse and display
+     */
+    public ArrayList getExpenseHistory(String tableName) {
+
+        ArrayList history = new ArrayList<Expense>();
+        Expense cur;
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from " + tableName, null);
+
+        if(res.getCount() <= 0) {
+            Log.w("DBHelper", "request failed"); // request failed with test case
+            return history;
+        }
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            cur = new Expense(
+                    res.getString(res.getColumnIndex("name")),
+                    res.getString(res.getColumnIndex("date")),
+                    res.getInt(res.getColumnIndex("amount"))
+            );
+
+            history.add(cur);
+
+            res.moveToNext();
+
+        }
+
+        return history;
+    }
+
     public void deleteExpense(String tableName, String itemName, String expenseName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
@@ -374,18 +394,5 @@ public class DBHelper extends SQLiteOpenHelper {
         updateItemState(tableName, itemName);
 
     }
-
-    public boolean isOpen() {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-
-        if(myDb.isOpen())
-            return true;
-        else
-            return false;
-
-    }
-
-
 
 }

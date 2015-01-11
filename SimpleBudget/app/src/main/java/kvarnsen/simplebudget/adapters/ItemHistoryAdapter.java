@@ -1,6 +1,5 @@
 package kvarnsen.simplebudget.adapters;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -10,13 +9,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.R;
-import kvarnsen.simplebudget.containers.ItemHistory;
-import kvarnsen.simplebudget.containers.LineItem;
+import kvarnsen.simplebudget.containers.Expense;
 
 /**
  * Created by joshuapancho on 5/01/15.
  */
 
+/*
+    RecyclerView Adapter that lists expenses for a line item in ItemHistoryActivity
+ */
 public class ItemHistoryAdapter extends RecyclerView.Adapter<ItemHistoryAdapter.ViewHolder> {
     private ArrayList mDataset;
 
@@ -47,14 +48,14 @@ public class ItemHistoryAdapter extends RecyclerView.Adapter<ItemHistoryAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        ItemHistory cur;
+        Expense cur;
         TableLayout curTable = holder.mTable;
 
         TextView historyDate = (TextView) curTable.findViewById(R.id.history_date);
         TextView historyName = (TextView) curTable.findViewById(R.id.history_name);
         TextView historyAmount = (TextView) curTable.findViewById(R.id.history_amount);
 
-        cur = (ItemHistory) mDataset.get(position);
+        cur = (Expense) mDataset.get(position);
 
         historyDate.setText(cur.date);
         historyName.setText(cur.name);

@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,8 +22,6 @@ import kvarnsen.simplebudget.database.DBHelper;
  */
 
 public class AddExpenseActivity extends ActionBarActivity {
-
-    public static final String PREFS_NAME = "MyBudgetPrefs";
 
     private LineItem item;
     private String itemName;
@@ -63,21 +59,6 @@ public class AddExpenseActivity extends ActionBarActivity {
 
             finish();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void onAddExpenseClick(View v) {
@@ -122,7 +103,7 @@ public class AddExpenseActivity extends ActionBarActivity {
 
             } else {
 
-                boolean result = myDb.addHistoryExpense(trimString(itemName), itemName, date, desc, amount);
+                boolean result = myDb.addExpense(trimString(itemName), itemName, date, desc, amount);
 
                 if(result) {
                     updateBudget(amount);
@@ -143,7 +124,7 @@ public class AddExpenseActivity extends ActionBarActivity {
     // convenience method to handle SharedPreferences updating of "spent" value
     public void updateBudget(int spent) {
 
-        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences preferences = getSharedPreferences(MainActivity.PREFS_NAME, 0);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("curSpent", preferences.getInt("curSpent", 0) + spent);
         editor.commit();
