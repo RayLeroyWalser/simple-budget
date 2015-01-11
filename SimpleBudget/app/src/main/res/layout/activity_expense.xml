@@ -25,20 +25,20 @@
             android:inputType="textCapSentences"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:hint="Description"/>
+            android:hint="@string/desc_text"/>
         <EditText
             android:id="@+id/amount"
             android:inputType="numberDecimal"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:hint="Amount"/>
+            android:hint="@string/amount_text"/>
         <Button
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:clickable="true"
             android:onClick="onAddExpenseClick"
-            android:text="Add Expense"/>
+            android:text="@string/add_expense_text"/>
 
     </LinearLayout>
 

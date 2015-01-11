@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:background="@drawable/ic_add"
-                android:contentDescription="Add new line item"
+                android:contentDescription="@string/new_item_hint"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
                 android:clickable="true"
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_adjust"
-                android:contentDescription="Adjust your budget"
+                android:contentDescription="@string/adjust_budget_hint"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
                 android:clickable="true"
@@ -51,7 +51,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Overview"
+            android:text="@string/overview_text"
             android:textStyle="bold"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
@@ -123,7 +123,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Items"
+            android:text="@string/item_text"
             android:textStyle="bold"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
@@ -146,7 +146,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No items to show right now.\nClick here to add a line item"
+                android:text="@string/no_items_text"
                 android:layout_gravity="center"
                 android:gravity="center"
             />
@@ -208,7 +208,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="Clear Database"
+                android:contentDescription="@string/clear_budget_hint"
                 android:paddingLeft="2dp"
                 android:src="@drawable/ic_delete"/>
 
@@ -216,7 +216,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Clear Database"
+                android:text="@string/clear_budget_text"
                 android:paddingTop="5dp"
                 android:paddingLeft="23dp"
                 android:textAlignment="center"

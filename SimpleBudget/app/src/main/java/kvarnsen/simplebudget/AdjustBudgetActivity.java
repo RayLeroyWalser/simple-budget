@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import kvarnsen.simplebudget.database.DBHelper;
+
 /*
     Prompts user to enter a new budget. Called from MainActivity.
  */
@@ -44,24 +46,32 @@ public class AdjustBudgetActivity extends ActionBarActivity {
         EditText amountHolder = (EditText) findViewById(R.id.amount);
         int newBudget = Integer.parseInt(amountHolder.getText().toString());
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("curBudget", newBudget);
-        boolean result = editor.commit();
-
         Context context = getApplicationContext();
         CharSequence text;
         int duration = Toast.LENGTH_SHORT;
 
-        if(result) {
-            text = "Budget adjusted";
+        // check that budget does not exceed amount already allocated
+        DBHelper myDb = DBHelper.getInstance(this);
+
+        if(newBudget < myDb.getTotalAllocated()) {
+            text = "New budget amount is less than amount already allocated, please try again";
             Toast.makeText(context, text, duration).show();
         } else {
-            text = "Failed to adjust budget";
-            Toast.makeText(context, text, duration).show();
-        }
+            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("curBudget", newBudget);
+            boolean result = editor.commit();
 
-        finish();
+            if(result) {
+                text = "Budget adjusted";
+                Toast.makeText(context, text, duration).show();
+            } else {
+                text = "Failed to adjust budget";
+                Toast.makeText(context, text, duration).show();
+            }
+
+            finish();
+        }
 
     }
 

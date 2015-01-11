@@ -15,10 +15,32 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_item_history">ItemHistoryActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_expense">ExpenseActivity</string>
     <string name="title_activity_adjust_budget">AdjustBudgetActivity</string>
     <string name="title_activity_adjust_item">AdjustItemActivity</string>
     <string name="title_activity_adjust_expense">AdjustExpenseActivity</string>
+    <string name="item_name">Item Name</string>
+    <string name="amount_budgeted">Amount Budgeted</string>
+    <string name="add_item">Add item</string>
+    <string name="amount_prompt">New Amount</string>
+    <string name="submit_text">Submit Budget</string>
+    <string name="name_text">New Name</string>
+    <string name="apply_text">Apply Changes</string>
+    <string name="delete_expense_text">Delete Expense</string>
+    <string name="delete_item_text">Delete Item</string>
+    <string name="desc_text">Description</string>
+    <string name="amount_text">Amount</string>
+    <string name="add_expense_text">Add Expense</string>
+    <string name="add_new_expense_text">Add new expense</string>
+    <string name="overview_text">Overview</string>
+    <string name="history_text">History</string>
+    <string name="no_history_text">No history available for that item.</string>
+    <string name="new_item_hint">Add new line item</string>
+    <string name="adjust_budget_hint">Adjust your budget</string>
+    <string name="item_text">Items</string>
+    <string name="no_items_text">No items to show right now.\nClick here to add a line item</string>
+    <string name="clear_budget_hint">Clear Budget</string>
+    <string name="clear_budget_text">Clear Budget</string>
+    <string name="budget_limit_hint">Budget Limit</string>
 
 </resources>
