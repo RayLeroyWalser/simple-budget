@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -208,8 +209,8 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     public void onItemClick(View v) {
 
-        CardView callHolder = (CardView) v;
-        String itemName = ((TextView) callHolder.findViewById(R.id.title)).getText().toString();
+        RelativeLayout callHolder = (RelativeLayout) v;
+        String itemName = ((TextView) callHolder.findViewById(R.id.item_name)).getText().toString();
 
         Intent intent = new Intent(this, ItemHistoryActivity.class);
         intent.putExtra("ITEM_NAME", itemName);
