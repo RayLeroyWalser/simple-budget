@@ -33,17 +33,10 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     public final static String PREFS_NAME = "MyBudgetPrefs";
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    DBHelper db;
-    DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle mDrawerToggle;
-    CardView budgetCard;
+    private DBHelper db;
+    private CardView budgetCard;
 
     private int curBudget = 0;
-    private int totalSpent = 0;
-
-    private ArrayList myLineItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +71,13 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         findViewById(R.id.add_item_button).setOnLongClickListener(listener);
         findViewById(R.id.adjust_budget_button).setOnLongClickListener(listener);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer, R.string.main);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer, R.string.main);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         db = DBHelper.getInstance(this);
@@ -127,7 +119,9 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         curBudget = preferences.getInt("curBudget", 0);
-        totalSpent = db.getTotalSpent();
+        db.checkBudgetIsDefined();
+
+        int totalSpent = db.getTotalSpent();
 
         CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
         TextView budgeted = (TextView) budgetCard.findViewById(R.id.budgeted);
@@ -144,8 +138,8 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         if(db.getNoRows() != 0)
             placeholder.setVisibility(View.GONE);
 
-        myLineItems = db.getAllLineItems();
-        mAdapter = new MainAdapter(myLineItems);
+        ArrayList myLineItems = db.getAllLineItems();
+        RecyclerView.Adapter mAdapter = new MainAdapter(myLineItems);
         mRecyclerView.setAdapter(mAdapter);
 
     }
@@ -157,7 +151,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     }
 
-    public void deleteDatabase(View v) {
+    public void clearBudget(View v) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(
                 MainActivity.this);
@@ -167,34 +161,21 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                boolean result = db.deleteDatabase();
+                db.clearBudget();
 
-                if(result) {
+                SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("curBudget", 0);
+                editor.commit();
 
-                    SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putInt("curBudget", 0);
-                    editor.commit();
+                Context context = getApplicationContext();
+                CharSequence text = "Budget cleared";
+                int duration = Toast.LENGTH_SHORT;
 
-                    Context context = getApplicationContext();
-                    CharSequence text = "Database cleared";
-                    int duration = Toast.LENGTH_SHORT;
+                Toast.makeText(context, text, duration).show();
 
-                    Toast.makeText(context, text, duration).show();
-
-                    DialogFragment fragment = new BudgetDialogFragment();
-                    fragment.show(getSupportFragmentManager(), "budget");
-
-
-                }
-                else {
-                    Context context = getApplicationContext();
-                    CharSequence text = "Database failed to clear";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast.makeText(context, text, duration).show();
-                }
-
+                DialogFragment fragment = new BudgetDialogFragment();
+                fragment.show(getSupportFragmentManager(), "budget");
 
             }
 
@@ -214,6 +195,13 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         Intent intent = new Intent(this, ItemHistoryActivity.class);
         intent.putExtra("ITEM_NAME", itemName);
+        startActivity(intent);
+
+    }
+
+    public void onGoalsClick(View v) {
+
+        Intent intent = new Intent(this, GoalsActivity.class);
         startActivity(intent);
 
     }

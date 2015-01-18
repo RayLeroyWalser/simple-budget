@@ -26,7 +26,7 @@ public class BudgetDialogFragment extends DialogFragment {
     }
 
     private int budget;
-    BudgetDialogListener mListener;
+    private BudgetDialogListener mListener;
 
     @Override
     public void onAttach(Activity activity) {
@@ -47,7 +47,6 @@ public class BudgetDialogFragment extends DialogFragment {
 
         builder.setTitle("Set budget limit");
         builder.setView(inflater.inflate(R.layout.dialog_budget, null))
-                // Add action buttons
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {

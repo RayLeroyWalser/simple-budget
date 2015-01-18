@@ -23,7 +23,6 @@ import kvarnsen.simplebudget.database.DBHelper;
 
 public class AddExpenseActivity extends ActionBarActivity {
 
-    private LineItem item;
     private String itemName;
 
     @Override
@@ -80,7 +79,7 @@ public class AddExpenseActivity extends ActionBarActivity {
 
         // get item
         DBHelper myDb = DBHelper.getInstance(this);
-        item = myDb.getLineItem(itemName);
+        LineItem item = myDb.getLineItem(itemName);
 
         if(desc.equals("") || amountStr.equals("")) {
 
@@ -96,7 +95,7 @@ public class AddExpenseActivity extends ActionBarActivity {
                 text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
 
-            } else if(Integer.parseInt(amountStr) > item.remaining) {
+            } else if(Integer.parseInt(amountStr) > item.getRemaining()) {
 
                 text = "Expense exceeds remaining budget for that item, please try again!";
                 Toast.makeText(context, text, duration).show();

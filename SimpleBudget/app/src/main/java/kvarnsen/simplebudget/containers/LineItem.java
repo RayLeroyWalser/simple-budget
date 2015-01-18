@@ -9,8 +9,8 @@ package kvarnsen.simplebudget.containers;
  */
 public class LineItem {
 
-    public int id, budgeted, spent, remaining;
-    public String name;
+    private int id, budgeted, spent, remaining;
+    private String name;
 
     public LineItem(int id, String name, int budgeted, int spent, int remaining) {
 
@@ -20,6 +20,26 @@ public class LineItem {
         this.spent = spent;
         this.remaining = remaining;
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getBudget() {
+        return budgeted;
+    }
+
+    public int getSpent() {
+        return spent;
+    }
+
+    public int getRemaining() {
+        return remaining;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

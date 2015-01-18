@@ -1,19 +1,16 @@
 package kvarnsen.simplebudget.containers;
 
 /**
- * Created by joshuapancho on 4/01/15.
+ * Created by joshuapancho on 17/01/15.
  */
 
-/*
-    Holds info about an expense for a line item. Used by ItemHistoryAdapter
- */
-public class Expense {
+public class Deposit {
 
     private String name;
     private String date;
     private int amount;
 
-    public Expense(String name, String date, int amount) {
+    public Deposit(String name, String date, int amount) {
         this.name = name;
         this.date = date;
         this.amount = amount;

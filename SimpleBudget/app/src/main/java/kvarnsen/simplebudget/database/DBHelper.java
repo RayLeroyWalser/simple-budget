@@ -10,7 +10,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.containers.Deposit;
 import kvarnsen.simplebudget.containers.Expense;
+import kvarnsen.simplebudget.containers.Goal;
 import kvarnsen.simplebudget.containers.LineItem;
 
 /**
@@ -26,15 +28,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static DBHelper instance;
 
-    public static final String DATABASE_NAME = "SimpleBudget.db";
-    public static final String BUDGET_TABLE_NAME = "budget";
-    public static final String BUDGET_ITEM_ID = "id";
-    public static final String BUDGET_ITEM_NAME = "name";
-    public static final String BUDGET_ITEM_BUDGETED = "budgeted";
-    public static final String BUDGET_ITEM_SPENT = "spent";
-    public static final String BUDGET_ITEM_REMAINING = "remaining";
+    private static final String DATABASE_NAME = "SimpleBudget.db";
+    private static final String BUDGET_TABLE_NAME = "budget";
+    private static final String BUDGET_ITEM_ID = "id";
+    private static final String BUDGET_ITEM_NAME = "name";
+    private static final String BUDGET_ITEM_BUDGETED = "budgeted";
+    private static final String BUDGET_ITEM_SPENT = "spent";
+    private static final String BUDGET_ITEM_REMAINING = "remaining";
 
-    Context myContext = null;
+    private Context myContext = null;
 
     /***********************************************************
      *
@@ -64,25 +66,28 @@ public class DBHelper extends SQLiteOpenHelper {
                 "create table budget " +
                         "(id integer primary key, name text,budgeted integer, spent integer, remaining integer)"
         );
+        db.execSQL(
+                "create table goals " +
+                        "(id integer primary key, name text, goal integer, deposited integer)"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS budget");
+        db.execSQL("DROP TABLE IF EXISTS goals");
         onCreate(db);
     }
 
     public boolean checkNameExists(String name) {
 
-        boolean result = false;
-
         SQLiteDatabase myDb = this.getWritableDatabase();
         Cursor c = myDb.rawQuery("select * from budget where name='" + name + "'", null);
 
         if(c.getCount() > 0)
-            result = true;
-
-        return result;
+            return true;
+        else
+            return false;
     }
 
     public int getTotalAllocated() {
@@ -126,20 +131,33 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int getNoRows() {
         SQLiteDatabase myDb = this.getWritableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(myDb, BUDGET_TABLE_NAME);
-        return numRows;
+        return (int) DatabaseUtils.queryNumEntries(myDb, BUDGET_TABLE_NAME);
     }
 
-    public boolean deleteDatabase() {
+    public void clearBudget() {
 
-        boolean result = false;
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("SELECT * FROM BUDGET", null);
 
-        if(myContext != null) {
-            this.close();
-            result = myContext.deleteDatabase(DATABASE_NAME);
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            myDb.execSQL("DROP TABLE " + createTableName(res.getString(res.getColumnIndex("name"))));
+
+            res.moveToNext();
+
         }
 
-        return result;
+        myDb.execSQL("DROP TABLE BUDGET");
+
+    }
+
+    public void checkBudgetIsDefined() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        myDb.execSQL("CREATE TABLE IF NOT EXISTS BUDGET " + "(id integer primary key, name text,budgeted integer, spent integer, remaining integer)");
+
     }
 
     /*****************************************************************
@@ -271,7 +289,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateItem(String tableName, String oldName, String newName, int newBudget, int spent) {
 
-        // update item in budget
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         Cursor res = myDb.rawQuery("select * from budget where name='" + oldName + "'", null);
@@ -291,7 +308,6 @@ public class DBHelper extends SQLiteOpenHelper {
         newName = newName.replaceAll("\\s+", "");
 
         if(!tableName.equals(newName))
-            // update name of itemHistory table
             myDb.execSQL("ALTER TABLE " + tableName + " RENAME TO " + newName);
 
     }
@@ -362,7 +378,6 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = myDb.rawQuery("select * from " + tableName, null);
 
         if(res.getCount() <= 0) {
-            Log.w("DBHelper", "request failed"); // request failed with test case
             return history;
         }
 
@@ -394,5 +409,216 @@ public class DBHelper extends SQLiteOpenHelper {
         updateItemState(tableName, itemName);
 
     }
+
+    /*****************************************************************
+     *
+     * GOAL FUNCTIONS
+     * Manages creation, adjustment and deletion of goals
+     *
+     *****************************************************************/
+
+    public void addGoal(String name, int goalAmount) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("name", name);
+        cv.put("goal", goalAmount);
+
+        myDb.insert("goals", null, cv);
+
+        myDb.execSQL(
+                "create table " + createTableName(name) + " " +
+                        "(id integer primary key, name text, amount integer, date text)"
+        );
+
+    }
+
+    public void adjustGoal(String newName, int newGoal) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        Cursor res = myDb.rawQuery("select * from goals where name='" + newName + "'", null);
+
+        res.moveToFirst();
+
+        String oldName = res.getString(res.getColumnIndex("name"));
+
+        cv.put("name", newName);
+        cv.put("goal", newGoal);
+
+        myDb.update("goals", cv, "id = ?", new String[] {
+                Integer.toString(res.getInt(res.getColumnIndex("id")))
+        });
+
+        if(!oldName.equals(newName))
+            myDb.execSQL("ALTER TABLE " + createTableName(oldName) + " RENAME TO " + createTableName(newName));
+
+    }
+
+    public void updateGoalState(String goalName, int newAmount) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        Cursor res = myDb.rawQuery("SELECT * FROM GOALS WHERE NAME='" + goalName + "'", null);
+
+        res.moveToFirst();
+
+        cv.put("name", goalName);
+        cv.put("goal", res.getInt(res.getColumnIndex("goal")));
+        cv.put("deposited", res.getInt(res.getColumnIndex("deposited")) + newAmount);
+
+        myDb.update("goals", cv, "id = ?", new String[] {
+                Integer.toString(res.getInt(res.getColumnIndex("id")))
+        });
+
+    }
+
+    public void deleteGoal(String name) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+
+        myDb.execSQL("DELETE FROM GOALS WHERE NAME ='" + name + "'");
+        myDb.execSQL("DROP TABLE " + createTableName(name));
+
+    }
+
+    public ArrayList getAllGoals() {
+
+        ArrayList goals = new ArrayList<Goal>();
+        Goal curGoal;
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from goals", null);
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            curGoal = new Goal(
+                    res.getString(res.getColumnIndex("name")),
+                    res.getInt(res.getColumnIndex("goal")),
+                    res.getInt(res.getColumnIndex("deposited"))
+            );
+
+            goals.add(curGoal);
+
+            res.moveToNext();
+
+        }
+
+        return goals;
+
+    }
+
+    // Used to create ArrayAdapter for MakeDepositActivity's Spinner
+    public ArrayList<String> getGoalNames() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from goals", null);
+
+        ArrayList<String> goalNames = new ArrayList<String>();
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            goalNames.add(res.getString(res.getColumnIndex("name")));
+
+            res.moveToNext();
+
+        }
+
+        return goalNames;
+
+    }
+
+    public Goal getGoal(String name) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("select * from goals where name='" + name + "'", null);
+
+        res.moveToFirst();
+
+        return new Goal(
+                res.getString(res.getColumnIndex("name")),
+                res.getInt(res.getColumnIndex("goal")),
+                res.getInt(res.getColumnIndex("deposited"))
+        );
+
+    }
+
+    /*****************************************************************
+     *
+     * DEPOSIT FUNCTIONS
+     * Manages creation, adjustment and deletion of goal deposits
+     *
+     *****************************************************************/
+
+    public void addDeposit(String goalName, String depositName, String date, int amount) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("name", depositName);
+        cv.put("date", date);
+        cv.put("amount", amount);
+
+        myDb.insert(createTableName(goalName), null, cv);
+        addExpense(createTableName(depositName), depositName, date, "Deposit", amount);
+
+        updateGoalState(goalName, amount);
+    }
+
+    public void removeDeposit(String goalName, String depositName) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        myDb.execSQL("DELETE FROM " + createTableName(goalName) + " WHERE NAME ='" + createTableName(depositName) + "'");
+
+    }
+
+
+    public ArrayList getDepositHistory(String goalName) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("SELECT * FROM " + createTableName(goalName), null);
+        ArrayList depositHistory = new ArrayList<Deposit>();
+        Deposit curDeposit;
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            curDeposit = new Deposit(
+                    res.getString(res.getColumnIndex("name")),
+                    res.getString(res.getColumnIndex("date")),
+                    res.getInt(res.getColumnIndex("amount"))
+            );
+
+            depositHistory.add(curDeposit);
+
+            res.moveToNext();
+
+        }
+
+        return depositHistory;
+
+    }
+
+    /*****************************************************************
+     *
+     * CONVENIENCE METHODS
+     *
+     *****************************************************************/
+
+    public String createTableName(String name) {
+
+        String tableName = name.replaceAll("\\s+", "");
+        tableName = tableName.toLowerCase();
+
+        return tableName;
+
+    }
+
 
 }

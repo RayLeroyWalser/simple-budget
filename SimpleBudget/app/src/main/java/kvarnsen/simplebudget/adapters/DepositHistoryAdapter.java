@@ -9,16 +9,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.containers.Deposit;
 import kvarnsen.simplebudget.containers.Expense;
 
 /**
- * Created by joshuapancho on 5/01/15.
+ * Created by joshuapancho on 18/01/15.
  */
 
-/*
-    RecyclerView Adapter that lists expenses for a line item in ItemHistoryActivity
- */
-public class ItemHistoryAdapter extends RecyclerView.Adapter<ItemHistoryAdapter.ViewHolder> {
+public class DepositHistoryAdapter extends RecyclerView.Adapter<DepositHistoryAdapter.ViewHolder> {
     private ArrayList mDataset;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -29,14 +27,14 @@ public class ItemHistoryAdapter extends RecyclerView.Adapter<ItemHistoryAdapter.
         }
     }
 
-    public ItemHistoryAdapter(ArrayList myDataset) {
+    public DepositHistoryAdapter(ArrayList myDataset) {
 
         mDataset = myDataset;
     }
 
     @Override
-    public ItemHistoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                     int viewType) {
+    public DepositHistoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                            int viewType) {
 
         TableLayout v = (TableLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.history_table, parent, false);
@@ -48,14 +46,14 @@ public class ItemHistoryAdapter extends RecyclerView.Adapter<ItemHistoryAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Expense cur;
+        Deposit cur;
         TableLayout curTable = holder.mTable;
 
         TextView historyDate = (TextView) curTable.findViewById(R.id.history_date);
         TextView historyName = (TextView) curTable.findViewById(R.id.history_name);
         TextView historyAmount = (TextView) curTable.findViewById(R.id.history_amount);
 
-        cur = (Expense) mDataset.get(position);
+        cur = (Deposit) mDataset.get(position);
 
         historyDate.setText(cur.getDate());
         historyName.setText(cur.getName());

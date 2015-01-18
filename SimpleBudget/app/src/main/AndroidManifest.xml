@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kvarnsen.simplebudget" >
-    
+
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -46,8 +46,22 @@
             android:name="kvarnsen.simplebudget.AdjustExpenseActivity"
             android:label="@string/title_activity_adjust_expense" >
         </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.GoalsActivity"
+            android:label="@string/title_activity_goals" >
+        </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.AddGoalActivity"
+            android:label="@string/title_activity_add_goal" >
+        </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.GoalHistoryActivity"
+            android:label="@string/title_activity_goal_history" >
+        </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.MakeDepositActivity"
+            android:label="@string/title_activity_make_deposit" >
+        </activity>
     </application>
 
-</manifest>
-
-<!-- android:icon from Smashing Magazine's Roundicons set (http://www.smashingmagazine.com/2014/01/24/roundicons-set-60-icons-png-ai-source/) -->
+</manifest> <!-- android:icon from Smashing Magazine's Roundicons set (http://www.smashingmagazine.com/2014/01/24/roundicons-set-60-icons-png-ai-source/) -->

@@ -17,8 +17,6 @@ import kvarnsen.simplebudget.database.DBHelper;
 
 public class AdjustBudgetActivity extends ActionBarActivity {
 
-    public final static String PREFS_NAME = "MyBudgetPrefs";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +55,7 @@ public class AdjustBudgetActivity extends ActionBarActivity {
             text = "New budget amount is less than amount already allocated, please try again";
             Toast.makeText(context, text, duration).show();
         } else {
-            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, 0);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("curBudget", newBudget);
             boolean result = editor.commit();

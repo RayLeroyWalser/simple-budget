@@ -19,7 +19,6 @@ import kvarnsen.simplebudget.database.DBHelper;
 public class AddItemActivity extends ActionBarActivity {
 
     private DBHelper myDb;
-    private int curBudget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class AddItemActivity extends ActionBarActivity {
         int allocated = myDb.getTotalAllocated();
 
         SharedPreferences preferences = getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        curBudget = preferences.getInt("curBudget", 0);
+        int curBudget = preferences.getInt("curBudget", 0);
 
         // basic input validation
         if(amountStr.equals("") || name.equals("")) {

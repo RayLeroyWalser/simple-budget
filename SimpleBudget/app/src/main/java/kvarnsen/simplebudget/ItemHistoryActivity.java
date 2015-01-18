@@ -26,15 +26,10 @@ import kvarnsen.simplebudget.database.DBHelper;
 
 public class ItemHistoryActivity extends ActionBarActivity {
 
-    private final int REQUEST_ITEM_ADJUSTMENT = 0;
-
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private LineItem myItem;
     private int itemSpent;
-    private TextView history;
     private DBHelper myDb;
     private String name;
     private String tableName;
@@ -69,11 +64,12 @@ public class ItemHistoryActivity extends ActionBarActivity {
         };
 
         findViewById(R.id.add_expense_button).setOnLongClickListener(listener);
+        findViewById(R.id.make_deposit_button).setOnLongClickListener(listener);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.item_history_recycler);
         mRecyclerView.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         myDb = DBHelper.getInstance(this);
@@ -126,9 +122,9 @@ public class ItemHistoryActivity extends ActionBarActivity {
         TextView spent = (TextView) findViewById(R.id.spent);
         TextView remaining = (TextView) findViewById(R.id.remaining);
 
-        budgeted.setText("Budgeted: $" + Integer.toString(myItem.budgeted) + ".00");
+        budgeted.setText("Budgeted: $" + Integer.toString(myItem.getBudget()) + ".00");
         spent.setText("Spent: $" + Integer.toString(itemSpent) + ".00");
-        remaining.setText("Remaining: $" + Integer.toString(myItem.budgeted - itemSpent) + ".00");
+        remaining.setText("Remaining: $" + Integer.toString(myItem.getBudget() - itemSpent) + ".00");
 
     }
 
@@ -137,14 +133,14 @@ public class ItemHistoryActivity extends ActionBarActivity {
      */
     public void setHistory(String name) {
 
-        history = (TextView) findViewById(R.id.item_history_placeholder);
+        TextView history = (TextView) findViewById(R.id.item_history_placeholder);
 
         ArrayList myHistory = myDb.getExpenseHistory(name);
 
         if(myHistory.size() != 0) {
             history.setVisibility(View.GONE);
 
-            mAdapter = new ItemHistoryAdapter(myHistory);
+            RecyclerView.Adapter mAdapter = new ItemHistoryAdapter(myHistory);
             mRecyclerView.setAdapter(mAdapter);
         } else {
 
@@ -165,11 +161,21 @@ public class ItemHistoryActivity extends ActionBarActivity {
 
     }
 
+    public void onMakeDepositClick(View v) {
+
+        Intent intent = new Intent(this, MakeDepositActivity.class);
+        intent.putExtra("ITEM_NAME", name);
+        startActivity(intent);
+
+    }
+
     public void onOverviewClick(View v) {
+
+        int REQUEST_ITEM_ADJUSTMENT = 0;
 
         Intent intent = new Intent(this, AdjustItemActivity.class);
         intent.putExtra("ITEM_NAME", name);
-        intent.putExtra("ITEM_BUDGET", myItem.budgeted);
+        intent.putExtra("ITEM_BUDGET", myItem.getBudget());
         intent.putExtra("ITEM_SPENT", itemSpent);
         startActivityForResult(intent, REQUEST_ITEM_ADJUSTMENT);
 
@@ -189,7 +195,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
         intent.putExtra("EXPENSE_AMOUNT", expAmount);
         intent.putExtra("ITEM_NAME", name);
         intent.putExtra("TABLE_NAME", tableName);
-        intent.putExtra("ITEM_REMAINING", (myItem.budgeted - itemSpent));
+        intent.putExtra("ITEM_REMAINING", (myItem.getBudget() - itemSpent));
         startActivity(intent);
 
     }

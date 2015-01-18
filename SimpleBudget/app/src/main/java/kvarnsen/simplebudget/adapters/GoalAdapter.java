@@ -1,28 +1,27 @@
 package kvarnsen.simplebudget.adapters;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.R;
-import kvarnsen.simplebudget.containers.LineItem;
+import kvarnsen.simplebudget.containers.Expense;
+import kvarnsen.simplebudget.containers.Goal;
 
 /**
- * Created by joshuapancho on 4/01/15.
+ * Created by joshuapancho on 5/01/15.
  */
 
 /*
-    RecyclerView Adapter that displays line items in MainActivity
+    RecyclerView Adapter that lists expenses for a line item in ItemHistoryActivity
  */
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.ViewHolder> {
     private ArrayList mDataset;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -33,14 +32,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         }
     }
 
-    public MainAdapter(ArrayList myDataset) {
+    public GoalAdapter(ArrayList myDataset) {
 
         mDataset = myDataset;
     }
 
     @Override
-    public MainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                        int viewType) {
+    public GoalAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                            int viewType) {
 
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_progress, parent, false);
@@ -52,17 +51,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        LineItem cur = (LineItem) mDataset.get(position);
-        RelativeLayout curItem = holder.mLayout;
+        Goal cur = (Goal) mDataset.get(position);
+        RelativeLayout curGoal = holder.mLayout;
 
-        double progress = (cur.getSpent()/(double)cur.getBudget()) * 100;
+        double progress = (cur.getDeposited()/(double)cur.getGoal()) * 100;
 
-        TextView curTitle = (TextView) curItem.findViewById(R.id.item_name);
-        TextView curProgText = (TextView) curItem.findViewById(R.id.prog_text);
-        ProgressBar curProgBar = (ProgressBar) curItem.findViewById(R.id.prog_bar);
+        TextView curTitle = (TextView) curGoal.findViewById(R.id.item_name);
+        TextView curProgText = (TextView) curGoal.findViewById(R.id.prog_text);
+        ProgressBar curProgBar = (ProgressBar) curGoal.findViewById(R.id.prog_bar);
 
         curTitle.setText(cur.getName());
-        curProgText.setText("$" + Integer.toString(cur.getSpent()) + ".00/$" + Integer.toString(cur.getBudget()) + ".00");
+        curProgText.setText("$" + Integer.toString(cur.getDeposited()) + ".00/$" + Integer.toString(cur.getGoal()) + ".00");
         curProgBar.setProgress((int) progress);
 
     }
