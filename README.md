@@ -12,3 +12,7 @@ Requirements
 Building
 -----
 To build, import the `SimpleBudget` directory into Android Studio.
+
+Additional Notes
+-----
+*Please note that functionality to track Savings Goals is currently in development and is not comprehensively tested as of yet.*

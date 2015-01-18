@@ -113,7 +113,7 @@ public class GoalsActivity extends ActionBarActivity {
 
     public void clearGoals(View v) {
 
-        
+
     }
 
 }
