@@ -62,6 +62,14 @@
             android:name="kvarnsen.simplebudget.MakeDepositActivity"
             android:label="@string/title_activity_make_deposit" >
         </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.test"
+            android:label="@string/title_activity_test" >
+        </activity>
+        <activity
+            android:name="kvarnsen.simplebudget.AdjustGoalActivity"
+            android:label="@string/title_activity_adjust_goal" >
+        </activity>
     </application>
 
 </manifest> <!-- android:icon from Smashing Magazine's Roundicons set (http://www.smashingmagazine.com/2014/01/24/roundicons-set-60-icons-png-ai-source/) -->

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,9 +42,13 @@ public class AddGoalActivity extends ActionBarActivity {
 
         EditText nameView = (EditText) findViewById(R.id.name);
         EditText amountView = (EditText) findViewById(R.id.amount);
+        EditText startDepositView = (EditText) findViewById(R.id.starting_deposit);
 
         String name = nameView.getText().toString();
         String amountStr = amountView.getText().toString();
+        String startingDepositStr = startDepositView.getText().toString();
+
+        int startingDeposit;
 
         Context context = getApplicationContext();
         CharSequence text;
@@ -56,17 +61,27 @@ public class AddGoalActivity extends ActionBarActivity {
 
         } else if(!(name.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
 
-            text = "Goal name can only contain letters, please try again!";
+            text = "Goal name can only contain letters, please try again";
             Toast.makeText(context, text, duration).show();
 
         } else {
 
-            myDb.addGoal(name, Integer.parseInt(amountStr));
+            if(startingDepositStr.equals(""))
+                startingDeposit = 0;
+            else
+                startingDeposit = Integer.parseInt(startingDepositStr);
 
-            text = "Goal added!";
-            Toast.makeText(context, text, duration).show();
+            boolean result = myDb.addGoal(name, Integer.parseInt(amountStr), startingDeposit);
 
-            finish();
+            if(result) {
+                text = "Goal added!";
+                Toast.makeText(context, text, duration).show();
+
+                finish();
+            } else {
+                text = "A goal with that name already exists, please try again";
+                Toast.makeText(context, text, duration).show();
+            }
 
         }
 

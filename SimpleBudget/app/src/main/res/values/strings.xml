@@ -39,7 +39,6 @@
     <string name="adjust_budget_hint">Adjust your budget</string>
     <string name="item_text">Items</string>
     <string name="no_items_text">No items to show right now.\nClick here to add a line item</string>
-    <string name="clear_budget_hint">Clear Budget</string>
     <string name="clear_budget_text">Clear Budget</string>
     <string name="budget_limit_hint">Budget Limit</string>
     <string name="title_activity_goals">GoalsActivity</string>
@@ -60,5 +59,10 @@
     <string name="title_activity_make_deposit">MakeDepositActivity</string>
     <string name="deposit_button_text">Make Deposit</string>
     <string name="clear_goals_text">Clear Goals</string>
+    <string name="title_activity_test">test</string>
+    <string name="delete_goals_text">Delete Goals</string>
+    <string name="starting_deposit_text">Starting Deposit (Optional)</string>
+    <string name="title_activity_adjust_goal">AdjustGoalActivity</string>
+    <string name="delete_goal_text">Delete Goal</string>
 
 </resources>

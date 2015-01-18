@@ -1,6 +1,7 @@
 package kvarnsen.simplebudget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -75,6 +76,14 @@ public class GoalHistoryActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        setOverview();
+        setHistory();
+    }
+
     public void setOverview() {
 
         myGoal = myDb.getGoal(name);
@@ -111,6 +120,21 @@ public class GoalHistoryActivity extends ActionBarActivity {
 
     public void onOverviewClick(View v) {
 
+        int REQUEST_GOAL_ADJUSTMENT = 0;
+
+        Intent intent = new Intent(this, AdjustGoalActivity.class);
+        intent.putExtra("GOAL_NAME", name);
+        intent.putExtra("GOAL_DEPOSITED", myGoal.getDeposited());
+        intent.putExtra("GOAL_AMOUNT", myGoal.getGoal());
+        startActivityForResult(intent, REQUEST_GOAL_ADJUSTMENT);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        name = data.getExtras().getString("GOAL_NAME");
+        getSupportActionBar().setTitle("Item Name: " + name);
 
     }
 

@@ -16,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Simple Budget");
+        getSupportActionBar().setTitle("Budget");
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
         View.OnLongClickListener listener = new View.OnLongClickListener() {
@@ -68,8 +70,24 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
             }
         };
 
-        findViewById(R.id.add_item_button).setOnLongClickListener(listener);
-        findViewById(R.id.adjust_budget_button).setOnLongClickListener(listener);
+        View.OnLongClickListener addItemListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                vb.vibrate(1000);
+
+                String str = v.getContentDescription() + " - $" + Integer.toString(curBudget - db.getTotalAllocated()) + ".00 left to allocate";
+
+                Toast toast = Toast.makeText(getApplicationContext(), str, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                toast.show();
+                return true;
+            }
+        };
+
+        findViewById(R.id.add_item_button).setOnLongClickListener(addItemListener);
+        findViewById(R.id.budget_card).setOnLongClickListener(listener);
 
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer, R.string.main);
@@ -151,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     }
 
-    public void clearBudget(View v) {
+    public void clearBudget() {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(
                 MainActivity.this);
@@ -240,5 +258,28 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
         exit();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_clear) {
+            clearBudget();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

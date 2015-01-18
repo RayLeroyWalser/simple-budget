@@ -417,32 +417,49 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      *****************************************************************/
 
-    public void addGoal(String name, int goalAmount) {
+    public boolean checkGoalExists(String name) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
+        Cursor res = myDb.rawQuery("SELECT * FROM GOALS WHERE NAME='" + name + "'", null);
 
-        cv.put("name", name);
-        cv.put("goal", goalAmount);
-
-        myDb.insert("goals", null, cv);
-
-        myDb.execSQL(
-                "create table " + createTableName(name) + " " +
-                        "(id integer primary key, name text, amount integer, date text)"
-        );
+        if(res.getCount() > 0)
+            return true;
+        else
+            return false;
 
     }
 
-    public void adjustGoal(String newName, int newGoal) {
+    public boolean addGoal(String name, int goalAmount, int initDeposit) {
+
+        if(checkGoalExists(name)) {
+            return false;
+        } else {
+            SQLiteDatabase myDb = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put("name", name);
+            cv.put("goal", goalAmount);
+            cv.put("deposited", initDeposit);
+
+            myDb.insert("goals", null, cv);
+
+            myDb.execSQL(
+                    "create table " + createTableName(name) + " " +
+                            "(id integer primary key, name text, amount integer, date text)"
+            );
+
+            return true;
+        }
+
+    }
+
+    public void adjustGoal(String oldName, String newName, int newGoal) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        Cursor res = myDb.rawQuery("select * from goals where name='" + newName + "'", null);
+        Cursor res = myDb.rawQuery("select * from goals where name='" + oldName + "'", null);
 
         res.moveToFirst();
-
-        String oldName = res.getString(res.getColumnIndex("name"));
 
         cv.put("name", newName);
         cv.put("goal", newGoal);
@@ -548,6 +565,33 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteGoals() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("SELECT * FROM GOALS", null);
+
+        res.moveToFirst();
+
+        while(!res.isAfterLast()) {
+
+            myDb.execSQL("DROP TABLE " + createTableName(res.getString(res.getColumnIndex("name"))));
+
+            res.moveToNext();
+
+        }
+
+        myDb.execSQL("DROP TABLE GOALS");
+
+    }
+
+    public void checkGoalTableIsDefined() {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        myDb.execSQL("CREATE TABLE IF NOT EXISTS GOALS " + "(id integer primary key, name text, goal integer, deposited integer)");
+
+
+    }
+
     /*****************************************************************
      *
      * DEPOSIT FUNCTIONS
@@ -565,7 +609,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("amount", amount);
 
         myDb.insert(createTableName(goalName), null, cv);
-        addExpense(createTableName(depositName), depositName, date, "Deposit", amount);
+        addExpense(createTableName(depositName), depositName, date, "Deposit: " + goalName, amount);
 
         updateGoalState(goalName, amount);
     }

@@ -27,7 +27,7 @@
                 android:background="@drawable/ic_add"
                 android:contentDescription="@string/add_goal_hint"
                 android:layout_gravity="right"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:clickable="true"
                 android:longClickable="true"
                 android:onClick="onAddClick"
@@ -139,42 +139,6 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/goals_text"
-                android:paddingTop="5dp"
-                android:paddingLeft="23dp"
-                android:textAlignment="center"
-                android:gravity="center"
-                />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="center"
-            android:background="#DADADA"
-            />
-
-        <LinearLayout
-            android:id="@+id/clearGoalsButton"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:onClick="clearGoals"
-            android:clickable="true">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/clear_goals_text"
-                android:paddingLeft="2dp"
-                android:src="@drawable/ic_delete"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="@string/clear_budget_text"
                 android:paddingTop="5dp"
                 android:paddingLeft="23dp"
                 android:textAlignment="center"
