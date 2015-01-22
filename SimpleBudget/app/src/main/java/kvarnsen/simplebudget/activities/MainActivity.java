@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,6 +25,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.activities.goals.GoalsActivity;
+import kvarnsen.simplebudget.activities.items.AddItemActivity;
+import kvarnsen.simplebudget.activities.items.ItemHistoryActivity;
 import kvarnsen.simplebudget.database.DBHelper;
 import kvarnsen.simplebudget.ui.BudgetDialogFragment;
 import kvarnsen.simplebudget.adapters.MainAdapter;

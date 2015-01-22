@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.items;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.activities.goals.AdjustDepositActivity;
 import kvarnsen.simplebudget.adapters.ItemHistoryAdapter;
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
@@ -32,7 +34,6 @@ public class ItemHistoryActivity extends ActionBarActivity {
     private int itemSpent;
     private DBHelper myDb;
     private String name;
-    private String tableName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +81,11 @@ public class ItemHistoryActivity extends ActionBarActivity {
             name = b.getString("ITEM_NAME");
             getSupportActionBar().setTitle("Item: " + name);
 
-            tableName = trimString(name);
-
             myItem = myDb.getLineItem(name);
 
             if(myItem != null) {
                 setOverview();
-                setHistory(tableName);
+                setHistory(name);
             }
         }
         else {
@@ -107,7 +106,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
         super.onResume();
 
         setOverview();
-        setHistory(tableName);
+        setHistory(name);
     }
 
     /*
@@ -116,7 +115,7 @@ public class ItemHistoryActivity extends ActionBarActivity {
     public void setOverview() {
 
         myItem = myDb.getLineItem(name);
-        itemSpent = myDb.getItemSpent(tableName);
+        itemSpent = myDb.getItemSpent(name);
 
         TextView budgeted = (TextView) findViewById(R.id.budgeted);
         TextView spent = (TextView) findViewById(R.id.spent);
@@ -189,14 +188,28 @@ public class ItemHistoryActivity extends ActionBarActivity {
         String expDate = ((TextView) table.findViewById(R.id.history_date)).getText().toString();
         int expAmount = trimExpenseAmount(((TextView) table.findViewById(R.id.history_amount)).getText().toString());
 
-        Intent intent = new Intent(this, AdjustExpenseActivity.class);
-        intent.putExtra("EXPENSE_NAME", expName);
-        intent.putExtra("EXPENSE_DATE", expDate);
-        intent.putExtra("EXPENSE_AMOUNT", expAmount);
-        intent.putExtra("ITEM_NAME", name);
-        intent.putExtra("TABLE_NAME", tableName);
-        intent.putExtra("ITEM_REMAINING", (myItem.getBudget() - itemSpent));
-        startActivity(intent);
+        if(expName.contains("Deposit")) {
+
+            Intent intent = new Intent(this, AdjustDepositActivity.class);
+            intent.putExtra("DEPOSIT_NAME", expName);
+            intent.putExtra("DEPOSIT_DATE", expDate);
+            intent.putExtra("DEPOSIT_AMOUNT", expAmount);
+            intent.putExtra("ITEM_NAME", name);
+            intent.putExtra("ITEM_REMAINING", (myItem.getBudget() - itemSpent));
+            startActivity(intent);
+
+        } else {
+
+            Intent intent = new Intent(this, AdjustExpenseActivity.class);
+            intent.putExtra("EXPENSE_NAME", expName);
+            intent.putExtra("EXPENSE_DATE", expDate);
+            intent.putExtra("EXPENSE_AMOUNT", expAmount);
+            intent.putExtra("ITEM_NAME", name);
+            intent.putExtra("ITEM_REMAINING", (myItem.getBudget() - itemSpent));
+            startActivity(intent);
+
+        }
+
 
     }
 
@@ -204,18 +217,10 @@ public class ItemHistoryActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         name = data.getExtras().getString("ITEM_NAME");
-        tableName = trimString(name);
         getSupportActionBar().setTitle("Item Name: " + name);
 
     }
 
-    public String trimString(String str) {
-
-        String newStr = str.toLowerCase();
-        newStr = newStr.replaceAll("\\s+", "");
-
-        return newStr;
-    }
 
     public int trimExpenseAmount(String str) {
 

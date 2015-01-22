@@ -1,21 +1,17 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.goals;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Vibrator;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,9 +22,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.activities.MainActivity;
 import kvarnsen.simplebudget.adapters.GoalAdapter;
 import kvarnsen.simplebudget.database.DBHelper;
-import kvarnsen.simplebudget.ui.BudgetDialogFragment;
 
 
 public class GoalsActivity extends ActionBarActivity {
@@ -170,7 +167,7 @@ public class GoalsActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_delete_goals) {
+        if (id == R.id.action_clear) {
             clearGoals();
             return true;
         }

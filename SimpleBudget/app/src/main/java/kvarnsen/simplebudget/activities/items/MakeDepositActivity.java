@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.items;
 
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.database.DBHelper;
 
 
@@ -51,9 +52,20 @@ public class MakeDepositActivity extends ActionBarActivity implements AdapterVie
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, myDb.getGoalNames());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setOnItemSelectedListener(this);
-        spinner.setAdapter(adapter);
+
+        if(adapter.getCount() > 0) {
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setOnItemSelectedListener(this);
+            spinner.setAdapter(adapter);
+        } else {
+            Context context = getApplicationContext();
+            CharSequence text = "No goals have been defined yet.";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast.makeText(context, text, duration).show();
+
+            finish();
+        }
 
 
     }
@@ -78,10 +90,6 @@ public class MakeDepositActivity extends ActionBarActivity implements AdapterVie
         EditText amountHolder = (EditText) findViewById(R.id.amount);
         String amountStr = amountHolder.getText().toString();
 
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM");
-        String date = formatter.format(c.getTime());
-
         if(amountStr.equals("")) {
 
             text = "Deposit amount must be specified, please try again";
@@ -96,7 +104,7 @@ public class MakeDepositActivity extends ActionBarActivity implements AdapterVie
 
             } else {
 
-                myDb.addDeposit(goalName, itemName, date, Integer.parseInt(amountStr));
+                myDb.addDeposit(goalName, itemName, Integer.parseInt(amountStr), true);
 
                 text = "Deposit added!";
                 Toast.makeText(context, text, duration).show();

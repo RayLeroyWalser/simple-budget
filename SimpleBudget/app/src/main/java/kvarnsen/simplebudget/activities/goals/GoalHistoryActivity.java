@@ -1,22 +1,23 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.goals;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.adapters.DepositHistoryAdapter;
-import kvarnsen.simplebudget.adapters.ItemHistoryAdapter;
 import kvarnsen.simplebudget.containers.Goal;
 import kvarnsen.simplebudget.database.DBHelper;
 
@@ -42,6 +43,24 @@ public class GoalHistoryActivity extends ActionBarActivity {
                 finish();
             }
         });
+
+        CardView overviewCard = (CardView) findViewById(R.id.overview_card);
+
+        View.OnLongClickListener listener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                vb.vibrate(1000);
+
+                Toast toast = Toast.makeText(getApplicationContext(), v.getContentDescription(), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                toast.show();
+                return true;
+            }
+        };
+
+        overviewCard.setOnLongClickListener(listener);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         mRecyclerView.setHasFixedSize(true);
@@ -127,6 +146,11 @@ public class GoalHistoryActivity extends ActionBarActivity {
         intent.putExtra("GOAL_DEPOSITED", myGoal.getDeposited());
         intent.putExtra("GOAL_AMOUNT", myGoal.getGoal());
         startActivityForResult(intent, REQUEST_GOAL_ADJUSTMENT);
+
+    }
+
+    public void onHistoryClick(View v) {
+
 
     }
 

@@ -8,9 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-import kvarnsen.simplebudget.containers.Deposit;
 import kvarnsen.simplebudget.containers.Expense;
 import kvarnsen.simplebudget.containers.Goal;
 import kvarnsen.simplebudget.containers.LineItem;
@@ -36,8 +37,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String BUDGET_ITEM_SPENT = "spent";
     private static final String BUDGET_ITEM_REMAINING = "remaining";
 
-    private Context myContext = null;
-
     /***********************************************************
      *
      * OVERALL DATABASE FUNCTIONS
@@ -56,8 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private DBHelper(Context context) {
-        super(context, DATABASE_NAME , null, 1);
-        myContext = context;
+        super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
@@ -167,7 +165,7 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      *****************************************************************/
 
-    public boolean insertLineItem(String tableName, String name, int budgeted, int spent) {
+    public boolean insertLineItem(String name, int budgeted, int spent) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -182,7 +180,7 @@ public class DBHelper extends SQLiteOpenHelper {
         myDb.insert("budget", null, cv);
 
         myDb.execSQL(
-                "create table " + tableName + " " +
+                "create table " + createTableName(name) + " " +
                         "(id integer primary key, name text, date text, amount integer)"
         );
 
@@ -246,10 +244,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public int getItemSpent(String tableName) {
+    public int getItemSpent(String name) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from " + tableName, null);
+        Cursor res = myDb.rawQuery("select * from " + createTableName(name), null);
 
         int spent = 0;
 
@@ -287,7 +285,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void updateItem(String tableName, String oldName, String newName, int newBudget, int spent) {
+    public void updateItem(String oldName, String newName, int newBudget, int spent) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -304,15 +302,15 @@ public class DBHelper extends SQLiteOpenHelper {
                 Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
         });
 
-        newName = newName.toLowerCase();
-        newName = newName.replaceAll("\\s+", "");
+        newName = createTableName(newName);
+        oldName = createTableName(oldName);
 
-        if(!tableName.equals(newName))
-            myDb.execSQL("ALTER TABLE " + tableName + " RENAME TO " + newName);
+        if(!oldName.equals(newName))
+            myDb.execSQL("ALTER TABLE " + oldName + " RENAME TO " + newName);
 
     }
 
-    public void deleteLineItem(String itemName, String tableName) {
+    public void deleteLineItem(String itemName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
 
@@ -320,7 +318,7 @@ public class DBHelper extends SQLiteOpenHelper {
         myDb.execSQL("DELETE FROM BUDGET WHERE NAME ='" + itemName + "'");
 
         // delete Item table
-        myDb.execSQL("DROP TABLE " + tableName);
+        myDb.execSQL("DROP TABLE " + createTableName(itemName));
 
     }
 
@@ -331,7 +329,7 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      *****************************************************************/
 
-    public boolean addExpense(String tableName, String name, String date, String desc, int amount) {
+    public boolean addExpense(String name, String date, String desc, int amount) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -340,17 +338,18 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("date", date);
         cv.put("amount", amount);
 
-        myDb.insert(tableName, null, cv);
+        myDb.insert(createTableName(name), null, cv);
 
-        updateItemState(tableName, name);
+        updateItemState(createTableName(name), name);
 
         return true;
     }
 
-    public void updateExpense(String tableName, String itemName, String oldName, String newName, String date, int newAmount) {
+    public void updateExpense(String itemName, String oldName, String newName, String date, int newAmount) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        String tableName = createTableName(itemName);
         Cursor res = myDb.rawQuery("select * from " + tableName + " where name='" + oldName + "'", null);
 
         res.moveToFirst();
@@ -370,12 +369,12 @@ public class DBHelper extends SQLiteOpenHelper {
     /*
         Creates an ArrayList of Expense objects for ItemHistoryActivity to parse and display
      */
-    public ArrayList getExpenseHistory(String tableName) {
+    public ArrayList getExpenseHistory(String name) {
 
         ArrayList history = new ArrayList<Expense>();
         Expense cur;
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from " + tableName, null);
+        Cursor res = myDb.rawQuery("select * from " + createTableName(name), null);
 
         if(res.getCount() <= 0) {
             return history;
@@ -400,9 +399,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return history;
     }
 
-    public void deleteExpense(String tableName, String itemName, String expenseName) {
+    public void deleteExpense(String itemName, String expenseName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
+        String tableName = createTableName(itemName);
 
         myDb.execSQL("DELETE FROM " + tableName + " WHERE NAME ='" + expenseName + "'");
 
@@ -429,7 +429,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean addGoal(String name, int goalAmount, int initDeposit) {
+    public boolean addGoal(String name, int goalAmount) {
 
         if(checkGoalExists(name)) {
             return false;
@@ -439,12 +439,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
             cv.put("name", name);
             cv.put("goal", goalAmount);
-            cv.put("deposited", initDeposit);
+            cv.put("deposited", 0);
 
             myDb.insert("goals", null, cv);
 
             myDb.execSQL(
-                    "create table " + createTableName(name) + " " +
+                    "create table " + createGoalTableName(name) + " " +
                             "(id integer primary key, name text, amount integer, date text)"
             );
 
@@ -464,28 +464,42 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("name", newName);
         cv.put("goal", newGoal);
 
-        myDb.update("goals", cv, "id = ?", new String[] {
+        myDb.update("goals", cv, "id = ?", new String[]{
                 Integer.toString(res.getInt(res.getColumnIndex("id")))
         });
 
         if(!oldName.equals(newName))
-            myDb.execSQL("ALTER TABLE " + createTableName(oldName) + " RENAME TO " + createTableName(newName));
+            myDb.execSQL("ALTER TABLE " + createGoalTableName(oldName) + " RENAME TO " + createGoalTableName(newName));
 
     }
 
-    public void updateGoalState(String goalName, int newAmount) {
+    public void updateGoalState(String goalName) {
 
+        // cycle through relevant deposit table instead, getting deposited from that
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         Cursor res = myDb.rawQuery("SELECT * FROM GOALS WHERE NAME='" + goalName + "'", null);
+        Cursor depositCur = myDb.rawQuery("SELECT * FROM " + createGoalTableName(goalName), null);
+
+        int deposited = 0;
+
+        depositCur.moveToFirst();
+
+        while(!depositCur.isAfterLast()) {
+
+            deposited = deposited + (depositCur.getInt(depositCur.getColumnIndex("amount")));
+
+            depositCur.moveToNext();
+
+        }
 
         res.moveToFirst();
 
         cv.put("name", goalName);
         cv.put("goal", res.getInt(res.getColumnIndex("goal")));
-        cv.put("deposited", res.getInt(res.getColumnIndex("deposited")) + newAmount);
+        cv.put("deposited", deposited);
 
-        myDb.update("goals", cv, "id = ?", new String[] {
+        myDb.update("goals", cv, "id = ?", new String[]{
                 Integer.toString(res.getInt(res.getColumnIndex("id")))
         });
 
@@ -496,7 +510,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase myDb = this.getWritableDatabase();
 
         myDb.execSQL("DELETE FROM GOALS WHERE NAME ='" + name + "'");
-        myDb.execSQL("DROP TABLE " + createTableName(name));
+        myDb.execSQL("DROP TABLE " + createGoalTableName(name));
 
     }
 
@@ -574,7 +588,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         while(!res.isAfterLast()) {
 
-            myDb.execSQL("DROP TABLE " + createTableName(res.getString(res.getColumnIndex("name"))));
+            myDb.execSQL("DROP TABLE " + createGoalTableName(res.getString(res.getColumnIndex("name"))));
 
             res.moveToNext();
 
@@ -599,19 +613,46 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      *****************************************************************/
 
-    public void addDeposit(String goalName, String depositName, String date, int amount) {
+    public void addDeposit(String goalName, String depositName, int amount, boolean isFromExpense) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM");
+        String date = formatter.format(c.getTime());
 
         cv.put("name", depositName);
         cv.put("date", date);
         cv.put("amount", amount);
 
-        myDb.insert(createTableName(goalName), null, cv);
-        addExpense(createTableName(depositName), depositName, date, "Deposit: " + goalName, amount);
+        myDb.insert(createGoalTableName(goalName), null, cv);
 
-        updateGoalState(goalName, amount);
+        if(isFromExpense)
+            addExpense(depositName, date, "Deposit: " + goalName, amount);
+
+        updateGoalState(goalName);
+    }
+
+    public void adjustDeposit(String goalName, String depositName, String date, int amount) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        String tableName = createGoalTableName(goalName);
+        Cursor res = myDb.rawQuery("SELECT * FROM " + tableName + " WHERE NAME ='" + depositName + "'", null);
+
+        res.moveToFirst();
+
+        cv.put("name", depositName);
+        cv.put("date", date);
+        cv.put("amount", amount);
+
+        myDb.update(tableName, cv, "id = ?", new String[] {
+                Integer.toString(res.getInt(res.getColumnIndex("id")))
+        });
+
+        updateGoalState(goalName);
+
     }
 
     public void removeDeposit(String goalName, String depositName) {
@@ -625,15 +666,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList getDepositHistory(String goalName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("SELECT * FROM " + createTableName(goalName), null);
-        ArrayList depositHistory = new ArrayList<Deposit>();
-        Deposit curDeposit;
+        Cursor res = myDb.rawQuery("SELECT * FROM " + createGoalTableName(goalName), null);
+        ArrayList depositHistory = new ArrayList<Expense>();
+        Expense curDeposit;
 
         res.moveToFirst();
 
         while(!res.isAfterLast()) {
 
-            curDeposit = new Deposit(
+            curDeposit = new Expense(
                     res.getString(res.getColumnIndex("name")),
                     res.getString(res.getColumnIndex("date")),
                     res.getInt(res.getColumnIndex("amount"))
@@ -659,6 +700,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String tableName = name.replaceAll("\\s+", "");
         tableName = tableName.toLowerCase();
+
+        return tableName;
+
+    }
+
+    public String createGoalTableName(String name) {
+
+        String tableName = name.replaceAll("\\s+", "");
+        tableName = tableName.toLowerCase();
+        tableName = "goal" + tableName;
 
         return tableName;
 

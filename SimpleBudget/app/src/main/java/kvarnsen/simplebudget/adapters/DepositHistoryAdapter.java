@@ -9,13 +9,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.R;
-import kvarnsen.simplebudget.containers.Deposit;
 import kvarnsen.simplebudget.containers.Expense;
 
 /**
  * Created by joshuapancho on 18/01/15.
  */
 
+/*
+    RecyclerView Adapter that lists deposits for a Goal
+ */
 public class DepositHistoryAdapter extends RecyclerView.Adapter<DepositHistoryAdapter.ViewHolder> {
     private ArrayList mDataset;
 
@@ -46,14 +48,14 @@ public class DepositHistoryAdapter extends RecyclerView.Adapter<DepositHistoryAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Deposit cur;
+        Expense cur;
         TableLayout curTable = holder.mTable;
 
         TextView historyDate = (TextView) curTable.findViewById(R.id.history_date);
         TextView historyName = (TextView) curTable.findViewById(R.id.history_name);
         TextView historyAmount = (TextView) curTable.findViewById(R.id.history_amount);
 
-        cur = (Deposit) mDataset.get(position);
+        cur = (Expense) mDataset.get(position);
 
         historyDate.setText(cur.getDate());
         historyName.setText(cur.getName());

@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.items;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.activities.MainActivity;
 import kvarnsen.simplebudget.database.DBHelper;
 
 /*
@@ -47,7 +49,6 @@ public class AddItemActivity extends ActionBarActivity {
         EditText amountView = (EditText) findViewById(R.id.amount);
 
         String name = nameView.getText().toString();
-        String tableName;
         String amountStr = amountView.getText().toString();
 
         Context context = getApplicationContext();
@@ -84,10 +85,7 @@ public class AddItemActivity extends ActionBarActivity {
                     text = "Item with that name already exists, please try again!";
                     Toast.makeText(context, text, duration).show();
                 } else {
-
-                    tableName = trimString(name);
-
-                    myDb.insertLineItem(tableName, name, Integer.parseInt(amountStr), 0);
+                    myDb.insertLineItem(name, Integer.parseInt(amountStr), 0);
 
                     text = "Item added. $" + Integer.toString(curBudget - myDb.getTotalAllocated()) + ".00 remaining to be allocated.";
                     duration = Toast.LENGTH_LONG;
@@ -102,11 +100,4 @@ public class AddItemActivity extends ActionBarActivity {
 
     }
 
-    public String trimString(String str) {
-
-        String newStr = str.replaceAll("\\s+", "");
-        newStr = newStr.toLowerCase();
-
-        return newStr;
-    }
 }

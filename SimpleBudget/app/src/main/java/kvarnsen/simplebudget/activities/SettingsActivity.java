@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities;
 
 import android.preference.PreferenceActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.ui.SettingsFragment;
 
 

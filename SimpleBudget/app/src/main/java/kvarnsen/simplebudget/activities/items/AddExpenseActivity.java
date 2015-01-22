@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.items;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,6 +12,8 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import kvarnsen.simplebudget.R;
+import kvarnsen.simplebudget.activities.MainActivity;
 import kvarnsen.simplebudget.containers.LineItem;
 import kvarnsen.simplebudget.database.DBHelper;
 
@@ -102,7 +104,7 @@ public class AddExpenseActivity extends ActionBarActivity {
 
             } else {
 
-                boolean result = myDb.addExpense(trimString(itemName), itemName, date, desc, amount);
+                boolean result = myDb.addExpense(itemName, date, desc, amount);
 
                 if(result) {
                     updateBudget(amount);
@@ -130,11 +132,4 @@ public class AddExpenseActivity extends ActionBarActivity {
 
     }
 
-    public String trimString(String str) {
-
-        String newStr = str.toLowerCase();
-        newStr = newStr.replaceAll("\\s+", "");
-
-        return newStr;
-    }
 }

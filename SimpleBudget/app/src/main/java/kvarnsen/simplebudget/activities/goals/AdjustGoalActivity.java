@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.goals;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,48 +8,43 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.database.DBHelper;
 
-/*
-    Dialog-like activity that handles adjustments to name and amount of line item
- */
 
-public class AdjustItemActivity extends ActionBarActivity {
-
-    private String itemName;
-    private int itemBudget;
-    private int itemSpent;
+public class AdjustGoalActivity extends ActionBarActivity {
 
     private DBHelper myDb;
+    private String oldName;
+    private int goalAmount;
+    private int deposited;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adjust_item);
+        setContentView(R.layout.activity_adjust_goal);
 
         myDb = DBHelper.getInstance(this);
 
         Bundle b = getIntent().getExtras();
-        itemName = b.getString("ITEM_NAME");
-        itemBudget = b.getInt("ITEM_BUDGET");
-        itemSpent = b.getInt("ITEM_SPENT");
+        oldName = b.getString("GOAL_NAME");
+        deposited = b.getInt("GOAL_DEPOSITED");
+        goalAmount = b.getInt("GOAL_AMOUNT");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.adjust_item_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Adjust Item: " + itemName);
+        getSupportActionBar().setTitle("Adjust Goal: " + oldName);
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", itemName));
+                setResult(Activity.RESULT_OK, new Intent().putExtra("GOAL_NAME", oldName));
                 finish();
             }
         });
@@ -57,7 +52,7 @@ public class AdjustItemActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", itemName));
+        setResult(Activity.RESULT_OK, new Intent().putExtra("GOAL_NAME", oldName));
         finish();
     }
 
@@ -65,45 +60,45 @@ public class AdjustItemActivity extends ActionBarActivity {
     public void onSubmitClick(View v) {
 
         EditText newNameView = (EditText) findViewById(R.id.name);
-        EditText newBudgetView = (EditText) findViewById(R.id.amount);
+        EditText newGoalView = (EditText) findViewById(R.id.amount);
 
         Context context = getApplicationContext();
         CharSequence text;
         int duration = Toast.LENGTH_SHORT;
 
         String newName = newNameView.getText().toString();
-        String newBudgetStr = newBudgetView.getText().toString();
-        int newBudget;
+        String newGoalStr = newGoalView.getText().toString();
+        int newGoal;
 
-        if(myDb.checkNameExists(newName)) {
+        if(myDb.checkGoalExists(newName)) {
 
-            text = "An item with that name already exists, please try again";
+            text = "A goal with that name already exists, please try again";
             Toast.makeText(context, text, duration).show();
 
-        } else if (newName.equals("") && newBudgetStr.equals("")) {    // no name or amount
+        } else if (newName.equals("") && newGoalStr.equals("")) {    // no name or amount
 
             text = "A name or amount must be specified!";
             Toast.makeText(context, text, duration).show();
 
-        } else if(newName.equals("") && !newBudgetStr.equals("")) { // amount but no name
-            newName = itemName;
-            newBudget = Integer.parseInt(newBudgetStr);
+        } else if(newName.equals("") && !newGoalStr.equals("")) { // amount but no name
+            newName = oldName;
+            newGoal = Integer.parseInt(newGoalStr);
 
-            if(newBudget < itemSpent) {
+            if(newGoal < deposited) {
 
-                text = "New item budget exceeds amount already spent, please try again";
+                text = "New goal amount is less than current amount deposited, please try again";
                 Toast.makeText(context, text, duration).show();
 
             } else {
 
-                myDb.updateItem(trimString(itemName), itemName, newName, newBudget, itemSpent);
-                setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", newName));
+                myDb.adjustGoal(oldName, newName, newGoal);
+                setResult(Activity.RESULT_OK, new Intent().putExtra("GOAL_NAME", newName));
                 finish();
 
             }
 
-        } else if(!newName.equals("") && newBudgetStr.equals("")) { // name but no amount
-            newBudget = itemBudget;
+        } else if(!newName.equals("") && newGoalStr.equals("")) { // name but no amount
+            newGoal = goalAmount;
 
             if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
 
@@ -111,17 +106,17 @@ public class AdjustItemActivity extends ActionBarActivity {
                 Toast.makeText(context, text, duration).show();
 
             } else {
-                myDb.updateItem(trimString(itemName), itemName, newName, newBudget, itemSpent);
-                setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", newName));
+                myDb.adjustGoal(oldName, newName, newGoal);
+                setResult(Activity.RESULT_OK, new Intent().putExtra("GOAL_NAME", newName));
                 finish();
             }
 
         } else {
-            newBudget = Integer.parseInt(newBudgetStr);
+            newGoal = Integer.parseInt(newGoalStr);
 
-            if(newBudget < itemSpent) {
+            if(newGoal < deposited) {
 
-                text = "New item budget exceeds amount already spent, please try again";
+                text = "New goal amount is less than current amount deposited, please try again";
                 Toast.makeText(context, text, duration).show();
 
             } else if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
@@ -131,8 +126,8 @@ public class AdjustItemActivity extends ActionBarActivity {
 
             } else {
 
-                myDb.updateItem(trimString(itemName), itemName, newName, newBudget, itemSpent);
-                setResult(Activity.RESULT_OK, new Intent().putExtra("ITEM_NAME", newName));
+                myDb.adjustGoal(oldName, newName, newGoal);
+                setResult(Activity.RESULT_OK, new Intent().putExtra("GOAL_NAME", newName));
                 finish();
 
             }
@@ -140,12 +135,12 @@ public class AdjustItemActivity extends ActionBarActivity {
 
     }
 
-    public void onDeleteItemClick(View v) {
+    public void onDeleteGoalClick(View v) {
 
-        final Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, GoalsActivity.class);
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                AdjustItemActivity.this);
+                AdjustGoalActivity.this);
 
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
@@ -153,14 +148,13 @@ public class AdjustItemActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 Context context = getApplicationContext();
-                CharSequence text = "Item deleted";
+                CharSequence text = "Goal deleted";
                 int duration = Toast.LENGTH_SHORT;
 
                 // delete item from Budget table, and delete Item Table
-                myDb.deleteLineItem(itemName, trimString(itemName));
+                myDb.deleteGoal(oldName);
 
                 Toast.makeText(context, text, duration).show();
-                // return to main activity
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
 
@@ -169,20 +163,10 @@ public class AdjustItemActivity extends ActionBarActivity {
         });
 
         alertDialog.setNegativeButton("No", null);
-        alertDialog.setMessage("Are you sure you want to delete this item?");
+        alertDialog.setMessage("Are you sure you want to delete this goal?");
         alertDialog.setTitle(R.string.app_name);
         alertDialog.show();
 
 
     }
-
-    public String trimString(String str) {
-
-        String newStr = str.toLowerCase();
-        newStr = newStr.replaceAll("\\s+", "");
-
-        return newStr;
-    }
-
-
 }

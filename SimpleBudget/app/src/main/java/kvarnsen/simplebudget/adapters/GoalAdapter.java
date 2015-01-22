@@ -19,7 +19,7 @@ import kvarnsen.simplebudget.containers.Goal;
  */
 
 /*
-    RecyclerView Adapter that lists expenses for a line item in ItemHistoryActivity
+    RecyclerView Adapter that lists savings goals
  */
 public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.ViewHolder> {
     private ArrayList mDataset;

@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.goals;
 
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.database.DBHelper;
 
 
@@ -48,8 +49,6 @@ public class AddGoalActivity extends ActionBarActivity {
         String amountStr = amountView.getText().toString();
         String startingDepositStr = startDepositView.getText().toString();
 
-        int startingDeposit;
-
         Context context = getApplicationContext();
         CharSequence text;
         int duration = Toast.LENGTH_SHORT;
@@ -66,12 +65,11 @@ public class AddGoalActivity extends ActionBarActivity {
 
         } else {
 
-            if(startingDepositStr.equals(""))
-                startingDeposit = 0;
-            else
-                startingDeposit = Integer.parseInt(startingDepositStr);
+            boolean result = myDb.addGoal(name, Integer.parseInt(amountStr));
 
-            boolean result = myDb.addGoal(name, Integer.parseInt(amountStr), startingDeposit);
+            if(!startingDepositStr.equals("")) {
+                myDb.addDeposit(name, "Initial", Integer.parseInt(startingDepositStr), false);
+            }
 
             if(result) {
                 text = "Goal added!";

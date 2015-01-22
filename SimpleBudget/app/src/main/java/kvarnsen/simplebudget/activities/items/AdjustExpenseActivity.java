@@ -1,4 +1,4 @@
-package kvarnsen.simplebudget;
+package kvarnsen.simplebudget.activities.items;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import kvarnsen.simplebudget.R;
 import kvarnsen.simplebudget.database.DBHelper;
 
 /*
@@ -21,7 +22,6 @@ public class AdjustExpenseActivity extends ActionBarActivity {
 
     private String expenseName;
     private String expenseDate;
-    private String tableName;
     private String itemName;
     private int expenseAmount;
     private int remaining;
@@ -40,7 +40,6 @@ public class AdjustExpenseActivity extends ActionBarActivity {
         expenseDate = b.getString("EXPENSE_DATE");
         expenseAmount = b.getInt("EXPENSE_AMOUNT");
         itemName = b.getString("ITEM_NAME");
-        tableName = b.getString("TABLE_NAME");
         remaining = b.getInt("ITEM_REMAINING");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.adjust_expense_toolbar);
@@ -71,15 +70,17 @@ public class AdjustExpenseActivity extends ActionBarActivity {
 
         // validation
         if(newName.equals("") && newAmountStr.equals("")) {
+
             text = "Both a name and an amount have to be specified, please try again";
             Toast.makeText(context, text, duration).show();
+
         } else if(!newName.equals("") && newAmountStr.equals("")) {
 
             if(!(newName.replaceAll("\\s+", "")).matches("[a-zA-z]+")) {
                 text = "Name can only contain letters, please try again";
                 Toast.makeText(context, text, duration).show();
             } else {
-                myDb.updateExpense(tableName, itemName, expenseName, newName, expenseDate, expenseAmount);
+                myDb.updateExpense(itemName, expenseName, newName, expenseDate, expenseAmount);
                 text = "Expense has been adjusted";
                 Toast.makeText(context, text, duration).show();
 
@@ -98,7 +99,7 @@ public class AdjustExpenseActivity extends ActionBarActivity {
             } else {
 
                 if(newName.equals("")) {
-                    myDb.updateExpense(tableName, itemName, expenseName, expenseName, expenseDate, newAmount);
+                    myDb.updateExpense(itemName, expenseName, expenseName, expenseDate, newAmount);
 
                     text = "Expense has been adjusted";
                     Toast.makeText(context, text, duration).show();
@@ -111,7 +112,7 @@ public class AdjustExpenseActivity extends ActionBarActivity {
                         text = "Name can only contain letters, please try again";
                         Toast.makeText(context, text, duration).show();
                     } else {
-                        myDb.updateExpense(tableName, itemName, expenseName, newName, expenseDate, newAmount);
+                        myDb.updateExpense(itemName, expenseName, newName, expenseDate, newAmount);
                         text = "Expense has been adjusted";
                         Toast.makeText(context, text, duration).show();
 
@@ -141,7 +142,7 @@ public class AdjustExpenseActivity extends ActionBarActivity {
                 CharSequence text = "Item deleted";
                 int duration = Toast.LENGTH_SHORT;
 
-                myDb.deleteExpense(tableName, itemName, expenseName);
+                myDb.deleteExpense(itemName, expenseName);
 
                 Toast.makeText(context, text, duration).show();
                 finish();
