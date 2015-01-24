@@ -23,10 +23,6 @@
             android:label="@string/title_activity_item" >
         </activity>
         <activity
-            android:name="kvarnsen.simplebudget.activities.SettingsActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
-        <activity
             android:name="kvarnsen.simplebudget.activities.items.ItemHistoryActivity"
             android:label="@string/title_activity_item_history" >
         </activity>

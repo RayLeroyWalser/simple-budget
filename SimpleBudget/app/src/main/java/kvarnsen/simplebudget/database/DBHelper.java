@@ -22,7 +22,7 @@ import kvarnsen.simplebudget.containers.LineItem;
 /*
     Handles SQLite Database creation, updating and deletion.
 
-    Code adapted with alterations from http://www.tutorialspoint.com/android/android_sqlite_database.htm
+    Overall Database Functions adapted with alterations from http://www.tutorialspoint.com/android/android_sqlite_database.htm
  */
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -36,12 +36,12 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String BUDGET_ITEM_SPENT = "spent";
     private static final String BUDGET_ITEM_REMAINING = "remaining";
 
-    /***********************************************************
+    /*****************************************************************
      *
      * OVERALL DATABASE FUNCTIONS
      * Handles functionality to manage the database as a whole
      *
-     ***********************************************************/
+     *****************************************************************/
 
     public static DBHelper getInstance(Context context) {
 
@@ -76,16 +76,12 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean checkNameExists(String name) {
-
-        SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor c = myDb.rawQuery("select * from budget where name='" + name + "'", null);
-
-        if(c.getCount() > 0)
-            return true;
-        else
-            return false;
-    }
+    /*****************************************************************
+     *
+     * BUDGET FUNCTIONS
+     * Handles functionality to manage the user's budget
+     *
+     *****************************************************************/
 
     public int getTotalAllocated() {
         SQLiteDatabase myDb = this.getWritableDatabase();
@@ -131,6 +127,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return (int) DatabaseUtils.queryNumEntries(myDb, BUDGET_TABLE_NAME);
     }
 
+
     public void clearBudget() {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
@@ -163,6 +160,17 @@ public class DBHelper extends SQLiteOpenHelper {
      * Manages creation, deletion and manipulation of line items
      *
      *****************************************************************/
+
+    public boolean checkNameExists(String name) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor c = myDb.rawQuery("select * from budget where name='" + name + "'", null);
+
+        if(c.getCount() > 0)
+            return true;
+        else
+            return false;
+    }
 
     public boolean insertLineItem(String name, int budgeted, int spent) {
 
@@ -314,6 +322,29 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase myDb = this.getWritableDatabase();
 
         myDb.execSQL("DELETE FROM BUDGET WHERE NAME ='" + itemName + "'");
+
+        // cycle through goals and check if they contain deposits under the itemName, then delete
+        ArrayList goals = getGoalNames();
+        Cursor res;
+        String goalName;
+
+        // if any deposits exist for the item, delete them from the respective goal/deposit table
+        for(int i=0; i < goals.size(); i++) {
+
+            goalName = getGoalTableName((String) goals.get(i));
+
+            res = myDb.rawQuery("SELECT * FROM " + goalName + " WHERE NAME = '" + itemName + "'", null);
+
+            if(res.getCount() > 0) {
+
+                myDb.execSQL("DELETE FROM " + goalName + " WHERE NAME = '" + itemName + "'");
+                updateGoalState((String) goals.get(i));
+
+            }
+
+
+        }
+
         myDb.execSQL("DROP TABLE " + getTableName(itemName));
 
     }
