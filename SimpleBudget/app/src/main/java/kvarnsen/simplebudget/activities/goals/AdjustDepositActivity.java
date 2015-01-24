@@ -1,15 +1,11 @@
 package kvarnsen.simplebudget.activities.goals;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +18,7 @@ public class AdjustDepositActivity extends ActionBarActivity {
     private String depositName;
     private String depositDate;
     private String itemName;
+    private String goalName;
     private int depositAmount;
     private int remaining;
 
@@ -82,10 +79,10 @@ public class AdjustDepositActivity extends ActionBarActivity {
             } else {
 
                 String parts[] = depositName.split(": ");
-                String trimmedDepositName = parts[1];
+                goalName = parts[1];
 
                 myDb.updateExpense(itemName, depositName, depositName, depositDate, newAmount);
-                myDb.adjustDeposit(trimmedDepositName, itemName, depositDate, newAmount);
+                myDb.adjustDeposit(goalName, itemName, depositDate, newAmount);
 
                 text = "Deposit has been adjusted";
                 Toast.makeText(context, text, duration).show();
@@ -98,7 +95,36 @@ public class AdjustDepositActivity extends ActionBarActivity {
 
     }
 
-    public void onDeleteExpenseClick(View v) {
+    public void onDeleteDepositClick(View v) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                AdjustDepositActivity.this);
+
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Context context = getApplicationContext();
+                CharSequence text = "Deposit deleted";
+                int duration = Toast.LENGTH_SHORT;
+
+                String parts[] = depositName.split(": ");
+                goalName = parts[1];
+
+                myDb.deleteDeposit(goalName, itemName, depositName);
+
+                Toast.makeText(context, text, duration).show();
+                finish();
+
+            }
+
+        });
+
+        alertDialog.setNegativeButton("No", null);
+        alertDialog.setMessage("Are you sure you want to delete this deposit?");
+        alertDialog.setTitle(R.string.app_name);
+        alertDialog.show();
 
 
     }

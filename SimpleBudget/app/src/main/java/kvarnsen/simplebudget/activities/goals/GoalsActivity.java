@@ -167,7 +167,7 @@ public class GoalsActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_clear) {
+        if (id == R.id.action_delete_goals) {
             clearGoals();
             return true;
         }

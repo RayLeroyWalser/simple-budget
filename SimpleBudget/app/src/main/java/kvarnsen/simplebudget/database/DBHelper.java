@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -141,7 +140,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         while(!res.isAfterLast()) {
 
-            myDb.execSQL("DROP TABLE " + createTableName(res.getString(res.getColumnIndex("name"))));
+            myDb.execSQL("DROP TABLE " + getTableName(res.getString(res.getColumnIndex("name"))));
 
             res.moveToNext();
 
@@ -180,7 +179,7 @@ public class DBHelper extends SQLiteOpenHelper {
         myDb.insert("budget", null, cv);
 
         myDb.execSQL(
-                "create table " + createTableName(name) + " " +
+                "create table " + getTableName(name) + " " +
                         "(id integer primary key, name text, date text, amount integer)"
         );
 
@@ -247,7 +246,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public int getItemSpent(String name) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from " + createTableName(name), null);
+        Cursor res = myDb.rawQuery("select * from " + getTableName(name), null);
 
         int spent = 0;
 
@@ -302,8 +301,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 Integer.toString(res.getInt(res.getColumnIndex(BUDGET_ITEM_ID)))
         });
 
-        newName = createTableName(newName);
-        oldName = createTableName(oldName);
+        newName = getTableName(newName);
+        oldName = getTableName(oldName);
 
         if(!oldName.equals(newName))
             myDb.execSQL("ALTER TABLE " + oldName + " RENAME TO " + newName);
@@ -314,11 +313,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
 
-        // delete from Budget
         myDb.execSQL("DELETE FROM BUDGET WHERE NAME ='" + itemName + "'");
-
-        // delete Item table
-        myDb.execSQL("DROP TABLE " + createTableName(itemName));
+        myDb.execSQL("DROP TABLE " + getTableName(itemName));
 
     }
 
@@ -338,9 +334,9 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("date", date);
         cv.put("amount", amount);
 
-        myDb.insert(createTableName(name), null, cv);
+        myDb.insert(getTableName(name), null, cv);
 
-        updateItemState(createTableName(name), name);
+        updateItemState(getTableName(name), name);
 
         return true;
     }
@@ -349,7 +345,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        String tableName = createTableName(itemName);
+        String tableName = getTableName(itemName);
         Cursor res = myDb.rawQuery("select * from " + tableName + " where name='" + oldName + "'", null);
 
         res.moveToFirst();
@@ -374,7 +370,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList history = new ArrayList<Expense>();
         Expense cur;
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("select * from " + createTableName(name), null);
+        Cursor res = myDb.rawQuery("select * from " + getTableName(name), null);
 
         if(res.getCount() <= 0) {
             return history;
@@ -402,7 +398,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteExpense(String itemName, String expenseName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        String tableName = createTableName(itemName);
+        String tableName = getTableName(itemName);
 
         myDb.execSQL("DELETE FROM " + tableName + " WHERE NAME ='" + expenseName + "'");
 
@@ -444,7 +440,7 @@ public class DBHelper extends SQLiteOpenHelper {
             myDb.insert("goals", null, cv);
 
             myDb.execSQL(
-                    "create table " + createGoalTableName(name) + " " +
+                    "create table " + getGoalTableName(name) + " " +
                             "(id integer primary key, name text, amount integer, date text)"
             );
 
@@ -469,17 +465,16 @@ public class DBHelper extends SQLiteOpenHelper {
         });
 
         if(!oldName.equals(newName))
-            myDb.execSQL("ALTER TABLE " + createGoalTableName(oldName) + " RENAME TO " + createGoalTableName(newName));
+            myDb.execSQL("ALTER TABLE " + getGoalTableName(oldName) + " RENAME TO " + getGoalTableName(newName));
 
     }
 
     public void updateGoalState(String goalName) {
 
-        // cycle through relevant deposit table instead, getting deposited from that
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         Cursor res = myDb.rawQuery("SELECT * FROM GOALS WHERE NAME='" + goalName + "'", null);
-        Cursor depositCur = myDb.rawQuery("SELECT * FROM " + createGoalTableName(goalName), null);
+        Cursor depositCur = myDb.rawQuery("SELECT * FROM " + getGoalTableName(goalName), null);
 
         int deposited = 0;
 
@@ -510,7 +505,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase myDb = this.getWritableDatabase();
 
         myDb.execSQL("DELETE FROM GOALS WHERE NAME ='" + name + "'");
-        myDb.execSQL("DROP TABLE " + createGoalTableName(name));
+        myDb.execSQL("DROP TABLE " + getGoalTableName(name));
 
     }
 
@@ -588,7 +583,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         while(!res.isAfterLast()) {
 
-            myDb.execSQL("DROP TABLE " + createGoalTableName(res.getString(res.getColumnIndex("name"))));
+            myDb.execSQL("DROP TABLE " + getGoalTableName(res.getString(res.getColumnIndex("name"))));
 
             res.moveToNext();
 
@@ -626,7 +621,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("date", date);
         cv.put("amount", amount);
 
-        myDb.insert(createGoalTableName(goalName), null, cv);
+        myDb.insert(getGoalTableName(goalName), null, cv);
 
         if(isFromExpense)
             addExpense(depositName, date, "Deposit: " + goalName, amount);
@@ -638,7 +633,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        String tableName = createGoalTableName(goalName);
+        String tableName = getGoalTableName(goalName);
         Cursor res = myDb.rawQuery("SELECT * FROM " + tableName + " WHERE NAME ='" + depositName + "'", null);
 
         res.moveToFirst();
@@ -655,18 +650,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void removeDeposit(String goalName, String depositName) {
+    public void deleteDeposit(String goalName, String depositName, String expenseName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        myDb.execSQL("DELETE FROM " + createTableName(goalName) + " WHERE NAME ='" + createTableName(depositName) + "'");
+        myDb.execSQL("DELETE FROM " + getGoalTableName(goalName) + " WHERE NAME ='" + depositName + "'");
 
+        deleteExpense(depositName, expenseName);
+        updateGoalState(goalName);
     }
 
 
     public ArrayList getDepositHistory(String goalName) {
 
         SQLiteDatabase myDb = this.getWritableDatabase();
-        Cursor res = myDb.rawQuery("SELECT * FROM " + createGoalTableName(goalName), null);
+        Cursor res = myDb.rawQuery("SELECT * FROM " + getGoalTableName(goalName), null);
         ArrayList depositHistory = new ArrayList<Expense>();
         Expense curDeposit;
 
@@ -696,7 +693,7 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      *****************************************************************/
 
-    public String createTableName(String name) {
+    public String getTableName(String name) {
 
         String tableName = name.replaceAll("\\s+", "");
         tableName = tableName.toLowerCase();
@@ -705,7 +702,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public String createGoalTableName(String name) {
+    public String getGoalTableName(String name) {
 
         String tableName = name.replaceAll("\\s+", "");
         tableName = tableName.toLowerCase();
