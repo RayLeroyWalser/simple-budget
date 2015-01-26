@@ -81,7 +81,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
                 Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 vb.vibrate(1000);
 
-                String str = v.getContentDescription() + " - $" + Integer.toString(curBudget - db.getTotalAllocated()) + ".00 left to allocate";
+                String str = "Add new item - $" + Integer.toString(curBudget - db.getTotalAllocated()) + ".00 left to allocate";
 
                 Toast toast = Toast.makeText(getApplicationContext(), str, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);

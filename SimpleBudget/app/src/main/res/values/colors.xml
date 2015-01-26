@@ -13,6 +13,7 @@
     <item name="darkred" type="color">#FFCC0000</item>
     <item name="white" type="color">#FFFFFF</item>
     <item name="grey" type="color">#CCCCCC</item>
+    <item name="transparent_grey" type="color">#30676767</item>
     <item name="black" type="color">#000000</item>
     <item name="greyblue" type="color">#336699</item>
     <item name="greyred" type="color">#E64848</item>

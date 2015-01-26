@@ -20,29 +20,16 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimaryDark">
 
-            <ImageButton
-                android:id="@+id/add_goal_button"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:background="@drawable/ic_add"
-                android:contentDescription="@string/add_goal_hint"
-                android:layout_gravity="right"
-                android:layout_marginRight="5dp"
-                android:clickable="true"
-                android:longClickable="true"
-                android:onClick="onAddClick"
-                />
-
         </android.support.v7.widget.Toolbar>
 
         <TextView
            android:id="@+id/goal_placeholder"
            android:layout_width="match_parent"
-           android:layout_height="wrap_content"
+           android:layout_height="410dp"
            android:layout_marginTop="50dp"
            android:text="@string/no_goals_text"
            android:layout_gravity="center"
-           android:gravity="center"/>
+           android:gravity="center_horizontal"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
@@ -50,7 +37,25 @@
             android:scrollbars="vertical"
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="445dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DADADA"/>
+
+        <TextView
+            android:id="@+id/add_item_button"
+            android:background="@drawable/selector"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="@string/add_new_goal_text"
+            android:clickable="true"
+            android:longClickable="true"
+            android:onClick="onAddClick"
+            />
     </LinearLayout>
 
     <LinearLayout

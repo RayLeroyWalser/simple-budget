@@ -64,7 +64,6 @@ public class ItemHistoryActivity extends ActionBarActivity {
             }
         };
 
-        findViewById(R.id.add_expense_button).setOnLongClickListener(listener);
         findViewById(R.id.make_deposit_button).setOnLongClickListener(listener);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.item_history_recycler);

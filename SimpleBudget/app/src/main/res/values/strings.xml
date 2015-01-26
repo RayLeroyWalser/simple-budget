@@ -50,7 +50,7 @@
     <string name="title_activity_add_goal">AddGoalActivity</string>
     <string name="goal_name_text">Goal Name</string>
     <string name="goal_amount_text">Goal Amount</string>
-    <string name="add_goal_text">Add Goal</string>
+    <string name="add_goal_text">Add goal</string>
     <string name="title_activity_goal_history">GoalHistoryActivity</string>
     <string name="make_deposit_text">Make a new deposit</string>
     <string name="deposit_history_text">Deposit History</string>
@@ -66,5 +66,7 @@
     <string name="adjust_goal_hint">Adjust Goal</string>
     <string name="title_activity_adjust_deposit">AdjustDepositActivity</string>
     <string name="delete_deposit_text">Delete Deposit</string>
+    <string name="add_item_text">Add new item</string>
+    <string name="add_new_goal_text">Add new goal</string>
 
 </resources>

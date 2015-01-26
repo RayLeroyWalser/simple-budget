@@ -44,22 +44,6 @@ public class GoalsActivity extends ActionBarActivity {
         getSupportActionBar().setTitle("Savings Goals");
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        View.OnLongClickListener listener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                vb.vibrate(1000);
-
-                Toast toast = Toast.makeText(getApplicationContext(), v.getContentDescription(), Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
-                toast.show();
-                return true;
-            }
-        };
-
-        findViewById(R.id.add_goal_button).setOnLongClickListener(listener);
-
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer, R.string.main);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -89,10 +73,12 @@ public class GoalsActivity extends ActionBarActivity {
 
         if(goals.size() > 0) {
             placeholder.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
             mAdapter = new GoalAdapter(goals);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             placeholder.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
             mRecyclerView.setAdapter(null);
         }
 
