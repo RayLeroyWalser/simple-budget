@@ -168,8 +168,12 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     public void addLineItem(View v) {
 
-        Intent intent = new Intent(this, AddItemActivity.class);
-        startActivity(intent);
+        if(curBudget - db.getTotalAllocated() == 0) {
+            Toast.makeText(getApplicationContext(), "Budget has been completely allocated", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(this, AddItemActivity.class);
+            startActivity(intent);
+        }
 
     }
 

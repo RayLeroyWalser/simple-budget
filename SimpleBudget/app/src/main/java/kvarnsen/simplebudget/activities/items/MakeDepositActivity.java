@@ -70,9 +70,7 @@ public class MakeDepositActivity extends ActionBarActivity implements AdapterVie
 
     }
 
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     public void onMakeDepositClick(View v) {
 
@@ -90,19 +88,33 @@ public class MakeDepositActivity extends ActionBarActivity implements AdapterVie
 
         } else {
 
-            if(Integer.parseInt(amountStr) > myDb.getLineItem(itemName).getRemaining()) {
+            int amount = Integer.parseInt(amountStr);
 
-                text = "Expense exceeds remaining budget for that item, please try again!";
+            if(amount > myDb.getLineItem(itemName).getRemaining()) {
+
+                text = "Deposit exceeds remaining budget for that item, please try again!";
                 Toast.makeText(context, text, duration).show();
 
             } else {
 
-                myDb.addDeposit(goalName, itemName, Integer.parseInt(amountStr), true);
+                int goalRemaining = myDb.getGoalRemaining(goalName);
 
-                text = "Deposit added!";
-                Toast.makeText(context, text, duration).show();
+                if(amount > goalRemaining) {
+                    text = "Deposit amount exceeds remaining amount for that goal ($" + goalRemaining + ".00), please try again!";
+                    Toast.makeText(context, text, duration).show();
+                } else {
+                    myDb.addDeposit(goalName, itemName, amount, true);
 
-                finish();
+                    if(myDb.getGoalRemaining(goalName) == 0) {
+                        text = "Congratulations, you complete your goal: " + goalName + "!";
+                    } else {
+                        text = "Deposit added!";
+                    }
+
+                    Toast.makeText(context, text, duration).show();
+                    finish();
+
+                }
 
             }
 

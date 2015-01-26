@@ -632,6 +632,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public int getGoalRemaining(String goalName) {
+
+        SQLiteDatabase myDb = this.getWritableDatabase();
+        Cursor res = myDb.rawQuery("SELECT * FROM GOALS WHERE NAME='" + goalName + "'", null);
+
+        res.moveToFirst();
+
+        int remaining = res.getInt(res.getColumnIndex("goal")) - res.getInt(res.getColumnIndex("deposited"));
+
+        return remaining;
+
+    }
+
     /*****************************************************************
      *
      * DEPOSIT FUNCTIONS

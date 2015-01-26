@@ -59,7 +59,7 @@
     <string name="title_activity_make_deposit">MakeDepositActivity</string>
     <string name="deposit_button_text">Make Deposit</string>
     <string name="clear_goals_text">Clear Goals</string>
-    <string name="delete_goals_text">Delete Goals</string>
+    <string name="delete_goals_text">Delete All Goals</string>
     <string name="starting_deposit_text">Starting Deposit (Optional)</string>
     <string name="title_activity_adjust_goal">AdjustGoalActivity</string>
     <string name="delete_goal_text">Delete Goal</string>
