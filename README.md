@@ -15,4 +15,4 @@ To build, import the `SimpleBudget` directory into Android Studio.
 
 Credits
 ----- 
-<a href="https://github.com/makovkastar/FloatingActionButton">FloatingActionButton</a> library by Oleksandr Melnykov was used to emulate floating action buttons for pre API 21 devices.
+The <a href="https://github.com/makovkastar/FloatingActionButton">FloatingActionButton</a> library by Oleksandr Melnykov was used to emulate floating action buttons for pre-API 21 devices.
