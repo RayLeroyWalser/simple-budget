@@ -23,6 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.melnykov.fab.FloatingActionButton;
+
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.R;
@@ -41,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
     private RecyclerView mRecyclerView;
     private DBHelper db;
     private CardView budgetCard;
+    private FloatingActionButton fab;
 
     private int curBudget = 0;
 
@@ -90,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
             }
         };
 
-        findViewById(R.id.add_item_button).setOnLongClickListener(addItemListener);
+        //findViewById(R.id.add_item_button).setOnLongClickListener(addItemListener);
         findViewById(R.id.budget_card).setOnLongClickListener(listener);
 
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -101,6 +104,11 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnLongClickListener(addItemListener);
+        fab.attachToRecyclerView(mRecyclerView);
+        fab.show();
 
         db = DBHelper.getInstance(this);
 
@@ -139,13 +147,15 @@ public class MainActivity extends ActionBarActivity implements BudgetDialogFragm
 
     public void initCards() {
 
+        fab.show();
+
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         curBudget = preferences.getInt("curBudget", 0);
         db.checkBudgetIsDefined();
 
         int totalSpent = db.getTotalSpent();
 
-        CardView placeholder = (CardView) findViewById(R.id.item_placeholder);
+        TextView placeholder = (TextView) findViewById(R.id.item_placeholder);
         TextView budgeted = (TextView) budgetCard.findViewById(R.id.budgeted);
         TextView spent = (TextView) budgetCard.findViewById(R.id.spent);
         TextView remaining = (TextView) budgetCard.findViewById(R.id.remaining);

@@ -44,7 +44,7 @@
     <string name="title_activity_goals">GoalsActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="add_goal_hint">Add new savings goal</string>
-    <string name="no_goals_text">No savings goals to show.</string>
+    <string name="no_goals_text">No savings goals to show.\nClick here to add a new goal</string>
     <string name="view_budget_hint">View Budget</string>
     <string name="goals_text">View Goals</string>
     <string name="title_activity_add_goal">AddGoalActivity</string>

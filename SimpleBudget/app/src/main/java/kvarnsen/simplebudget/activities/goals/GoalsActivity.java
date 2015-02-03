@@ -20,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.melnykov.fab.FloatingActionButton;
+
 import java.util.ArrayList;
 
 import kvarnsen.simplebudget.R;
@@ -33,6 +35,7 @@ public class GoalsActivity extends ActionBarActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private DBHelper db;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,9 @@ public class GoalsActivity extends ActionBarActivity {
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.attachToRecyclerView(mRecyclerView);
 
         db = DBHelper.getInstance(this);
 
@@ -76,10 +82,12 @@ public class GoalsActivity extends ActionBarActivity {
             mRecyclerView.setVisibility(View.VISIBLE);
             mAdapter = new GoalAdapter(goals);
             mRecyclerView.setAdapter(mAdapter);
+            fab.show();
         } else {
             placeholder.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
             mRecyclerView.setAdapter(null);
+            fab.hide();
         }
 
     }
