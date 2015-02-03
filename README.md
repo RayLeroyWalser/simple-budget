@@ -3,6 +3,8 @@ Simple Budget
 
 An Android app that allows a user to define a weekly budget, split the budget into line items, and add expenses for each item.
 
+A user can also define savings goals and make deposits into those goals via line item expenses.
+
 Requirements
 -----
 - Android 4.3 Jelly Bean (API 18)
